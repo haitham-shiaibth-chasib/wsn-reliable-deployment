@@ -247,15 +247,15 @@ d = Paper(TEMPLATE)
 TITLE = "Reliability-Guaranteed Sensor Deployment for Wireless Sensor Networks Using Edge-Corrected Coverage Statistics and Drop-Error-Tolerant Lattices"
 
 ABSTRACT = (
-    "Sensor networks are usually sized with formulas for the expected coverage, so about half of the random drops "
-    "planned this way miss the target. We present a deployment framework in which coverage and connectivity targets "
+    "Sensor networks are usually sized with formulas for the expected coverage, so about half of random drops sized "
+    "this way miss the target. We present a framework in which coverage and connectivity targets "
     "hold with a stated probability. It combines an edge-corrected mean and variance of area coverage, a Beta "
     "approximation of its distribution, an edge-corrected connectivity condition, and a lattice shrunk to tolerate "
     "aerial drop errors. In sixteen settings with 300 Monte Carlo runs each, the rule met a 95 percent reliability "
-    f"target in {beta_lo*100:.0f} to {beta_hi*100:.0f} percent of runs; the mean rule reached {mean_lo*100:.0f} to "
+    f"target in {beta_lo*100:.0f} to {beta_hi*100:.0f} percent of drops; the mean rule reached {mean_lo*100:.0f} to "
     f"{mean_hi*100:.0f} percent. With drop errors of 30 percent of the sensing radius, a tolerant lattice of "
     f"{int(e16q('triangular', 0.3)['nodes'])} nodes reached 99 percent coverage in "
-    f"{100 * e16q('triangular', 0.3)['p_meet']:.0f} percent of 1,000 test drops; a random drop needed {n_rand_guar}. Against eight baselines, including three recent optimizers, the lattice reached full "
+    f"{100 * e16q('triangular', 0.3)['p_meet']:.0f} percent of 1,000 test drops; a random drop needed {n_rand_guar}. Against eight baselines, including three optimizers from 2025 and 2026, the lattice reached full "
     "coverage without fitness evaluations."
 )
 KEYWORDS = ("Wireless sensor networks, Sensor deployment, Coverage reliability, Network connectivity, Boundary effects, "
@@ -510,7 +510,7 @@ d.p("where {{a_m}} uses radius {{r_m}}, so Eqs. (4)-(8) apply unchanged [@lazos]
     "deployment of {{N}} nodes the schedule uses the smallest {{q}} that keeps both conditions of Eq. (10),")
 d.eq(r"q^{\star}=\min\left\{q:\;P\left(C_{q}\geq C_{t}\right)\geq 1-\frac{\delta}{2},\;P_{\mathrm{conn},q}\geq 1-\frac{\delta}{2}\right\}")
 d.p("found by bisection on a 0.01 grid. Each node is then active in a share {{q^⋆}} of the rounds, so with the "
-    "first-order radio model [@heinzelman] the expected lifetime in rounds grows by the factor {{1/q^⋆}} over an "
+    "first-order radio model [@heinzelman] the expected communication-energy lifetime in rounds grows by the factor {{1/q^⋆}} over an "
     "always-on network, while each round meets both targets with probability at least {{1 − δ}} until batteries "
     "begin to run out. In each round every awake node sends and receives one packet over the distance {{R_c}}.")
 
@@ -519,7 +519,8 @@ d.h1("5. Experimental setup")
 d.p("All methods were implemented in Python 3 with NumPy and SciPy, and each run used one processor core. Coverage of a "
     "layout is the share of cell centers of a regular raster that fall inside at least one disk, with a resolution between "
     "0.5 m and 3.3 m depending on the field size and the experiment (all rasters are listed in the code). Means are reported with "
-    "standard deviations or Student t intervals and proportions with Wilson intervals [@wilson]. Shares of "
+    "standard deviations or Student t intervals; Wilson 95% intervals [@wilson] are shown for the key shares (Tables 6, 8 "
+    "and 11, Figs. 4 and 8) and can be computed for every share from the raw per-run files in the repository. Shares of "
     "successful drops are tested against their nominal value with the exact binomial test, paired comparisons use "
     "the Wilcoxon signed-rank test [@wilcoxon] with the matched-pairs rank-biserial correlation as effect size, and "
     "the nine deployment methods are compared with the Friedman test, using seeds as blocks. Within each family of "
@@ -533,10 +534,10 @@ d.table("Simulation settings",
          ["Lattices", "500", "{{r}} = 25-100 m", "exact"],
          ["Drop error", "500", "{{r}} = 62.5 m, {{σ/r}} = 0-0.5, {{C_t}} = 0.99, {{δ}} = 0.05", "100; 500 / 1,000"],
          ["Baselines", "500", "{{r}} = 62.5 m, {{N}} = 25-36", f"{n_seeds} seeds"],
-         ["Extensions", "200", "{{k}} = 1-3, {{f}} = 0.1-0.3, Elfes", "100"],
-         ["Risk level", "200", "{{r}} = 20 m, {{δ}} = 0.01, 0.10", "1,000"],
-         ["Heterogeneous", "200", "{{r}} = 15 / 25 m in equal shares", "500"],
-         ["Scheduling", "200", "{{R_c}} = 40 m, {{N}} = 1-3 × {{N^⋆}}", "500"],
+         ["Extensions", "200", "{{r}} = 20 m, {{R_c}} = 40 m, {{k}} = 1-3, {{f}} = 0.1-0.3, Elfes", "100"],
+         ["Risk level", "200", "{{r}} = 20 m, {{C_t}} = 0.80-0.99, {{δ}} = 0.01, 0.10", "1,000"],
+         ["Heterogeneous", "200", "{{r}} = 15 / 25 m in equal shares, {{C_t}} = 0.80-0.99", "500"],
+         ["Scheduling", "200", "{{r}} = 20 m, {{R_c}} = 40 m, {{C_t}} = 0.9, {{N}} = 1-3 × {{N^⋆}}", "500"],
          ["ILP", "500", "{{r}} = 62.5 m, 10 m grids", "20 min limit"],
          ["Environment", "200", "{{r}} = 20 m, {{R_c}} = 40 m, {{C_t}} = 0.9, {{η}} = 3, {{σ_s}} = 0/8 dB, {{L_o}} = 20 dB", "300 / 500"]],
         [1300, 750, 2000, 600])
@@ -579,7 +580,7 @@ d.p(f"Fig. 2 compares the three mean models with simulation for {{{{r}}}} = 20 m
     f"Over the 80 settings of Table 5 its mean absolute error is {exa['MAE']:.4f}, against {poi['MAE']:.3f} for the "
     f"Poisson model and {lin['MAE']:.3f} for the linear estimator.")
 d.figure(os.path.join(FIG, "paper_fig2_models.png"), "Mean coverage of the three models against simulation (200 m field, sensing radius 20 m)")
-d.table("Error of the mean models against 100-run simulation means (80 settings)",
+d.table("Error of the mean models against 100-run simulation means (200 m field, {{r}} = 10-25 m, {{N}} = 10-200; 80 settings)",
         [["Model", "MAE", "RMSE", "Max error"],
          ["Linear estimator", f"{lin['MAE']:.3f}", f"{lin['RMSE']:.3f}", f"{lin['MaxAbs']:.3f}"],
          ["Poisson model", f"{poi['MAE']:.3f}", f"{poi['RMSE']:.3f}", f"{poi['MaxAbs']:.3f}"],
@@ -611,14 +612,14 @@ for L_, r_ in ((200.0, 15.0), (200.0, 20.0), (200.0, 25.0), (400.0, 20.0)):
         rows.append([f"{int(L_)}, {r_:g}", f"{t_:.2f}", f"{int(m_['N'])} / {int(b_['N'])}",
                      f"{100 * m_['p_meet']:.1f}",
                      f"{100 * b_['p_meet']:.1f} [{100 * b_['p_lo']:.1f}–{100 * b_['p_hi']:.1f}]"])
-d.table("Node counts and share of 300 drops that met the target in the sixteen settings (Wilson 95% intervals in brackets)",
+d.table("Node counts and share of 300 drops that met the target in the sixteen settings ({{δ}} = 0.05; Wilson 95% intervals in brackets)",
         rows, [700, 480, 960, 760, 1700])
 
 d.h2("6.3 Connectivity and the joint rule")
 d.p("Fig. 5 compares the isolated-node model of Eq. (9) with simulation. The model tracks the simulated "
     "probability of no isolated node closely. Full connectivity needs more nodes at low and medium probabilities, "
     "because small groups can split off together, but the curves meet above about 0.95.")
-d.figure(os.path.join(FIG, "paper_fig5_connectivity.png"), "Connectivity of random drops against node count (200 m field; distances are the communication range, markers are simulations)")
+d.figure(os.path.join(FIG, "paper_fig5_connectivity.png"), "Connectivity of random drops against node count (200 m field, sensing radius 20 m, 300 drops per point; distances are the communication range, markers are simulations)")
 jr = lambda rc, t, rule: joint[(rc, t, rule)]
 joint_p40 = next(t["p_holm"] for t in tests if t["family"].startswith("D.") and t["comparison"] == "joint, Rc=40, Ct=0.9")
 d.p(f"With {{{{R_c}}}} = 40 m and {{{{C_t}}}} = 0.9, sizing for coverage alone gave "
@@ -670,7 +671,7 @@ d.p(f"Fig. 6 and Table 8 show the node counts needed when every node lands with 
     f"design ({{{{E[C] ≥ 0.99}}}}) and for the reliability design ({{{{C ≥ 0.99}}}} in at least 95% of drops). "
     f"Without correction, the 33-node triangular lattice drops to {pct(e8_naive02['naive_expected'], 1)} expected "
     f"coverage at {{{{σ}}}} = 0.2{{{{r}}}}. The mean design restores 0.99 with {int(e8_naive02['robust_nodes'])} nodes "
-    f"({{{{κ}}}} = {e8_naive02['kappa']:.2f}), but reaches 0.99 in only {pct(_e8share[(0.2, 'triangular')], 0)} of drops; the "
+    f"({{{{κ}}}} = {e8_naive02['kappa']:.2f}), but reaches 0.99 in only {pct(_e8share[(0.2, 'triangular')], 0)} of 100 drops; the "
     f"reliability design needs {int(_t02['nodes'])} nodes ({{{{κ}}}} = {_t02['kappa']:.2f}). At {{{{σ}}}} = 0.3{{{{r}}}}, "
     f"about 19 m, the triangular lattice needs {int(e8_03['triangular']['robust_nodes'])} nodes for the mean and "
     f"{int(_t03['nodes'])} for the reliability target, against {n_rand_mean} and {n_rand_guar} for a random drop sized "
@@ -700,7 +701,7 @@ for s_ in (0.0, 0.1, 0.2, 0.3, 0.4, 0.5):
         rel_ = f"{int(a_['nodes'])} / {int(b_['nodes'])}"
         met_ = f"{100 * a_['p_meet']:.1f} [{100 * a_['lo']:.1f}–{100 * a_['hi']:.1f}]"
     rows.append([f"{s_:.1f}", f"{int(t_['robust_nodes'])} / {int(q_['robust_nodes'])}", rel_, met_])
-d.table("Error-tolerant lattices for 99% coverage: node counts of the mean and the reliability design", rows,
+d.table("Error-tolerant lattices for 99% coverage (500 m field, {{r}} = 62.5 m): node counts of the mean and the reliability design; shares from 1,000 validation drops", rows,
         [500, 1250, 1350, 1500])
 
 d.h2("6.6 Comparison with optimization methods")
@@ -722,11 +723,11 @@ d.p(f"Fig. 7 and Table 9 compare the lattice with the eight baselines for a fixe
     f"regular gaps, and {best25['method']} covered {pct(best25['mean'], 1)} against {pct(lat25['mean'], 1)}. An "
     "optimizer thus remains useful when the budget is fixed below the count of Section 4. The Friedman test rejected equal performance of the "
     f"nine methods at every node count (largest Holm-corrected {{{{p}}}} = {sci(fried_max_p)}), and after Holm "
-    f"correction {wil_sig} of the {len(wil)} Wilcoxon comparisons with the lattice were significant at the 0.05 level.")
+    f"correction {wil_sig} of the {len(wil)} Wilcoxon comparisons with the lattice were significant at the 0.05 level (at 25 nodes in favor of the baselines that covered more).")
 d.p(("At 33 and 36 nodes the lattice was connected for {{R_c}} = √3{{r}} by construction, while many optimized "
      "layouts were not. " if lat_conn else "")
     + f"A tight layout has a cost: when the 33-node "
-    f"layouts were dropped with an error of 0.2{{{{r}}}}, the lattice kept {pct(lat33['noisy_mean'], 1)} coverage, "
+    f"layouts were dropped with an error of 0.2{{{{r}}}} (20 draws per run), the lattice kept {pct(lat33['noisy_mean'], 1)} coverage, "
     f"VFA {pct(vfa33['noisy_mean'], 1)} and {best_pop33['method']} {pct(best_pop33['noisy_mean'], 1)}, because VFA "
     "keeps more overlap. The fixed-count lattice here is built for a design radius of about 0.95{{r}} and is slightly "
     f"denser than the full-cover lattice of Section 6.5, which keeps only {pct(e8_naive02['naive_expected'], 1)} at the same "
@@ -737,7 +738,7 @@ rows = [["Method", "{{N}} = 25", "{{N}} = 30", "{{N}} = 33"]]
 for m in ["Random", "VFA", "PSO", "GA", "GWO", "ICGWO", "VASF-PSO", "DAR-SSA", "Proposed lattice"]:
     f_ = lambda q: f"{100*q['mean']:.1f} ± {100*q['std']:.1f}"
     rows.append([m.replace("Proposed lattice", "Proposed"), f_(e10q(m, 25)), f_(e10q(m, 30)), f_(e10q(m, 33))])
-d.table(f"Coverage (%) of the proposed lattice and the baselines, mean ± std over {n_seeds} seeds", rows,
+d.table(f"Coverage (%) of the proposed lattice and the baselines, mean ± std over {n_seeds} seeds (the lattice is deterministic)", rows,
         [1150, 1160, 1160, 1160])
 
 d.h2("6.7 Accuracy of the extensions")
@@ -776,7 +777,7 @@ d.p(f"Fig. 8 compares the open-field rule of Section 4.4 ({int(O_(o_)['N'])} nod
     f"corridors and all three rules reached {pct(S_(u8)['p_both'], 1)}. The simulated rule met the 95% requirement "
     f"in all four environments, at {int(S_(o_)['N']) - int(O_(o_)['N'])} extra nodes in the open field and "
     f"{int(S_(u0)['N']) - int(O_(u0)['N'])} in the unshadowed urban layout.")
-d.figure(os.path.join(FIG, "paper_fig10_environment.png"), "Share of 500 drops meeting both targets under three rules, with Wilson intervals; bar labels are node counts, the dashed line is 0.95")
+d.figure(os.path.join(FIG, "paper_fig10_environment.png"), "Share of 500 drops meeting both targets under three rules (200 m field, sensing radius 20 m, communication range 40 m, target 0.9), with Wilson intervals; bar labels are node counts, the dashed line is 0.95")
 
 d.h2("6.9 Risk level, heterogeneous radii and sleep scheduling")
 d.p(f"Table 10 repeats the sizing study of Section 6.2 at risk levels of 1% and 10% with 1,000 drops per setting. "
@@ -816,10 +817,10 @@ d.p(f"Table 11 applies the schedule of Section 4.7 to the joint design of Sectio
     f"of cases; the always-on row repeats the {int(e14[0]['N_joint'])}-node design of Sections 6.3 and 6.8 with new "
     f"seeds, and its {pct(e14[0]['p_both'], 1)} agrees with the values found there within sampling error. With 0.5 J "
     "per node, 2,000-bit packets, {{E_elec}} = 50 nJ/bit and {{ε_amp}} = 100 pJ/bit/m², the first-order radio "
-    f"model gives an expected lifetime of {round(e14[0]['rounds_always_on'])} rounds for the always-on network and "
+    f"model gives an expected communication-energy lifetime of {round(e14[0]['rounds_always_on'])} rounds for the always-on network and "
     f"{round(e14[3]['rounds']):,} rounds at three times the node count; these lifetimes are computed, not "
     "simulated.")
-rows = [["{{N}} / {{N^⋆}}", "{{N}}", "{{q^⋆}}", "Lifetime gain", "Both targets met (%) [95% CI]"]]
+rows = [["{{N}} / {{N^⋆}}", "{{N}}", "{{q^⋆}}", "Lifetime gain (comm. energy)", "Both targets met (%) [95% CI]"]]
 for q in e14:
     rows.append([f"{q['multiplier']:.1f}", f"{int(q['N'])}", f"{q['q']:.2f}", f"{q['lifetime_gain']:.2f}",
                  f"{100 * q['p_both']:.1f} [{100 * q['lo']:.1f}–{100 * q['hi']:.1f}]"])
@@ -829,10 +830,10 @@ d.table("Randomized sleep scheduling at a stated reliability (200 m field, {{C_t
 # ============================================================================= 7. Limitations
 d.h1("7. Threats to validity")
 d.p("**Internal validity.** Coverage is measured on rasters of 0.5 m to 3.3 m; Eq. (17) and the simulations agree "
-    "to within 0.001, so the raster error is small against the effects reported. Monte Carlo shares carry Wilson "
-    "intervals and every comparison is corrected for multiplicity. The three recent baselines were re-implemented "
+    "to within 0.001, so the raster error is small against the effects reported. Monte Carlo shares are tested with exact "
+    "binomial tests and every comparison is corrected for multiplicity. The three recent baselines were re-implemented "
     "from their papers and run with default parameters, so the original code or problem-specific tuning could do "
-    "better at small node counts; our implementations are public for that reason. The integer program stopped at a "
+    "better at small node counts; the baseline settings of Table 4 were not varied, and our implementations are public for that reason. The integer program stopped at a "
     "time limit, so its node counts are upper bounds and its dual bounds are lower bounds.")
 d.p("**Construct validity.** Sensing follows the binary disk model except in the Elfes experiment, and the "
     "isolated-node term is a proxy for connectivity that is accurate only at high probabilities and can be "
@@ -851,8 +852,8 @@ d.p("Sizing a random drop for the expected coverage misses the target about half
     "more nodes. A joint rule adds connectivity, and the same expressions give the expected coverage under failures, "
     "k-coverage and probabilistic sensing, and extend to obstacles and shadow fading. Among buildings the isolated-node term can be optimistic; sizing "
     "connectivity by simulation kept the promised 95% in all four environments tested. For planned drops at an "
-    f"error of 0.3{{{{r}}}}, a triangular lattice shrunk to absorb the error reached 99% coverage in 95% of drops with "
-    f"{int(e16q('triangular', 0.3)['nodes'])} nodes, where a random drop needed {n_rand_guar}; sized for the mean only, "
+    f"error of 0.3{{{{r}}}}, a triangular lattice shrunk to absorb the error reached 99% coverage in "
+    f"{pct(e16q('triangular', 0.3)['p_meet'], 1)} of 1,000 test drops with {int(e16q('triangular', 0.3)['nodes'])} nodes, where a random drop needed {n_rand_guar}; sized for the mean only, "
     f"it needed {int(e8_03['triangular']['robust_nodes'])} nodes against {n_rand_mean}. With the node count set by these rules, the lattice matched or beat all eight baselines without a single fitness evaluation, "
     f"and it needed fewer nodes than an integer program run for 20 minutes. Extra nodes can be turned into lifetime: tripling the drop let "
     f"each node sleep {pct(1 - e14[3]['q'], 0)} of the time at the same reliability. Future work "

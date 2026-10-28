@@ -24,10 +24,10 @@ wsndeploy/                   the library
   ilp.py                     minimum-node full cover as an integer linear program (HiGHS)
   sim.py, stats.py           Monte Carlo coverage and connectivity; confidence intervals and errors
 experiments/
-  run_experiments.py         runs E2, E5-E16 (and supplementary S2), writes results/ and results/raw/
+  run_experiments.py         runs E2, E5-E16 (and the additional scan S2), writes results/ and results/raw/
   statistics.py              every statistical test of the article -> results/statistical_tests.*
   make_figures.py            the eight manuscript figures -> figures/paper_fig*.png
-                             (paper_fig6_grid_gaps.png and paper_fig9_extensions.png are supplementary)
+                             (paper_fig6_grid_gaps.png and paper_fig9_extensions.png are not used in the article)
 manuscript/                  scripts that build the Word manuscript from results/ (template not included)
 results/                     aggregated tables, DATA_DICTIONARY.md, CHECKSUMS.sha256
 results/raw/                 one row per simulation run or optimiser run, seed manifest, layouts
@@ -52,7 +52,7 @@ The manuscript build (optional) also needs `pandoc` 3.x on the system path.
 ## Reproducing the article
 
 ```bash
-./reproduce_all.sh                        # full pipeline, about 3.5 h on 2 cores
+./reproduce_all.sh                        # full pipeline, about 5 h on 2 cores
 ./reproduce_all.sh --quick                # 10 % of the runs, about 20 min, for a smoke test
 WORKERS=4 ./reproduce_all.sh              # more processes for E10
 TEMPLATE=/path/IJIES_Format.docx ./reproduce_all.sh   # also rebuild the Word manuscript
