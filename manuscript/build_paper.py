@@ -47,7 +47,7 @@ def load(name):
 
 AUTHORS = ("Haitham Shiaibth Chasib", "Israa Jaber Khalaf Al-Ogaili")
 AFFILIATION = "General Directorate of Education in Babylon, Ministry of Education, Iraq"
-EMAIL = "haitham.shiaibth.chasib@gmail.com"
+EMAIL = "haitham.aljabry2014@gmail.com"
 
 
 def pct(x, d=1):
