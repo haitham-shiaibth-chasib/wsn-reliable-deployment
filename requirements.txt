@@ -1,0 +1,9 @@
+# Exact versions used to produce the published results (Python 3.13.16, Linux x86-64).
+numpy==2.5.3
+scipy==1.18.1
+matplotlib==3.11.2
+PyYAML==6.0.3
+# manuscript build only
+pillow==12.3.0
+# tests only
+pytest==8.4.2

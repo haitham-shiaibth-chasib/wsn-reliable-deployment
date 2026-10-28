@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite the article below and this repository."
+title: "wsn-reliable-deployment: code and data for reliability-guaranteed sensor deployment"
+version: 1.2.0
+date-released: 2026-10-27
+license: MIT
+repository-code: "https://github.com/haitham-shiaibth-chasib/wsn-reliable-deployment"
+keywords:
+  - wireless sensor networks
+  - sensor deployment
+  - coverage reliability
+  - connectivity
+  - boundary effects
+  - metaheuristic optimization
+authors:
+  - family-names: Chasib
+    given-names: Haitham Shiaibth
+    affiliation: "General Directorate of Education in Babylon, Ministry of Education, Iraq"
+  - family-names: Al-Ogaili
+    given-names: Israa Jaber Khalaf
+    affiliation: "General Directorate of Education in Babylon, Ministry of Education, Iraq"
+preferred-citation:
+  type: article
+  title: "Reliability-Guaranteed Sensor Deployment for Wireless Sensor Networks Using Edge-Corrected Coverage Statistics and Drop-Error-Tolerant Lattices"
+  authors:
+    - family-names: Chasib
+      given-names: Haitham Shiaibth
+    - family-names: Al-Ogaili
+      given-names: Israa Jaber Khalaf
+  journal: "International Journal of Intelligent Engineering and Systems"
+  year: 2026
+  status: submitted

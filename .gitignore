@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+# the journal template is distributed by the journal, not by this repository
+manuscript/IJIES_Format.docx
+manuscript/*.docx
+manuscript/*.pdf

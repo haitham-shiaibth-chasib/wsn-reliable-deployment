@@ -1,0 +1,6 @@
+method,nodes,dual_bound,gap,coverage,status,seconds,rho,candidates,demand_points
+"ILP, demand points",29,26.0,0.10344827586207062,0.99616,Time limit reached. (HiGHS Status 13: Time limit reached),1200.2881009578705,62.5,2601,2500
+"ILP, guaranteed",36,32.0,0.1111111111111111,1.0,Time limit reached. (HiGHS Status 13: Time limit reached),1200.897954940796,55.428932188134524,2601,2500
+Triangular lattice,33,,,1.0,,,,,
+Square lattice,36,,,1.0,,,,,
+Kershner density bound (interior),25,,,,,,,,

@@ -1,0 +1,188 @@
+family,test,comparison,n,statistic,p_value,p_holm,effect_size,note
+A. Mean-model accuracy (E2),share of settings inside the 95% CI of the simulation mean,linear_no_overlap,80,0.0,nan,nan,nan,
+A. Mean-model accuracy (E2),share of settings inside the 95% CI of the simulation mean,poisson_exp,80,0.0,nan,nan,nan,
+A. Mean-model accuracy (E2),share of settings inside the 95% CI of the simulation mean,exact_edge,80,0.925,nan,nan,nan,
+A. Mean-model accuracy (E2),Wilcoxon signed-rank on the absolute error of the models,linear_no_overlap vs poisson_exp,80,0.0,7.843990008143828e-15,2.3531970024431483e-14,1.0,positive effect: first model has the larger error
+A. Mean-model accuracy (E2),Wilcoxon signed-rank on the absolute error of the models,linear_no_overlap vs exact_edge,80,0.0,7.849526548031477e-15,2.3531970024431483e-14,1.0,positive effect: first model has the larger error
+A. Mean-model accuracy (E2),Wilcoxon signed-rank on the absolute error of the models,poisson_exp vs exact_edge,80,0.0,7.849526548031477e-15,2.3531970024431483e-14,1.0,positive effect: first model has the larger error
+B. Variance model (E6a),share of N values whose model std lies in the chi-square 95% CI of the simulated std,edge-aware model,20,1.0,nan,nan,nan,
+B. Variance model (E6a),share of N values whose model std lies in the chi-square 95% CI of the simulated std,stationary approximation,20,0.3,nan,nan,nan,
+B. Variance model (E6a),Wilcoxon signed-rank on the absolute error of the std models,stationary vs edge-aware,20,1.0,3.814697265625e-06,3.814697265625e-06,0.9904761904761905,positive effect: stationary approximation has the larger error
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.8, N=99",300,0.54,2.707638891793708e-95,2.7076388917937077e-94,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.9, N=143",300,0.5266666666666666,3.526259115534459e-100,4.936762761748242e-99,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.95, N=188",300,0.59,8.340668901153596e-78,3.3362675604614386e-77,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.99, N=300",300,0.56,3.8572029843274493e-88,2.7000420890292145e-87,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.8, N=57",300,0.54,2.707638891793708e-95,2.7076388917937077e-94,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.9, N=82",300,0.53,5.988503306106708e-99,7.18620396732805e-98,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.95, N=109",300,0.5566666666666666,2.5619111539143148e-89,2.0495289231314518e-88,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.99, N=176",300,0.6433333333333333,1.2434382406761424e-60,1.2434382406761424e-60,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.8, N=37",300,0.5266666666666666,3.526259115534459e-100,4.936762761748242e-99,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.9, N=54",300,0.5666666666666667,8.397196159055811e-86,5.0383176954334864e-85,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.95, N=72",300,0.6,1.8174081563305986e-74,5.452224468991796e-74,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.99, N=117",300,0.6033333333333334,2.292037498137346e-73,4.584074996274692e-73,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.8, N=216",300,0.5166666666666667,6.64693805040641e-104,9.970407075609617e-103,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.9, N=312",300,0.5066666666666667,1.1116564746495172e-107,1.7786503594392275e-106,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.95, N=409",300,0.5866666666666667,6.259222751882509e-79,3.1296113759412545e-78,nan,
+C. Reliability of the mean rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.99, N=646",300,0.5366666666666666,1.6594400692363797e-96,1.825384076160018e-95,nan,
+C. Pooled reliability (mean rule),pooled share with Wilson 95% CI,"mean rule, 16 settings",4800,0.558125,nan,nan,nan,"Wilson CI [0.5440, 0.5721]"
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.8, N=112",300,0.9633333333333334,0.3530219265745024,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.9, N=162",300,0.9433333333333334,0.594584640601332,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.95, N=216",300,0.9266666666666666,0.08264453038286558,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.99, N=358",300,0.93,0.11170355836361674,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.8, N=67",300,0.9566666666666667,0.691649596368412,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.9, N=97",300,0.9466666666666667,0.79017657622686,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.95, N=130",300,0.9333333333333333,0.18401654057847022,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.99, N=220",300,0.9233333333333333,0.04515085926938058,0.6772628890407087,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.8, N=45",300,0.9233333333333333,0.04515085926938058,0.6772628890407087,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.9, N=66",300,0.94,0.42470742641321424,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.95, N=89",300,0.9433333333333334,0.594584640601332,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.99, N=152",300,0.9333333333333333,0.18401654057847022,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.8, N=235",300,0.94,0.42470742641321424,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.9, N=340",300,0.9333333333333333,0.18401654057847022,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.95, N=450",300,0.9566666666666667,0.691649596368412,1.0,nan,
+C. Reliability of the normal rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.99, N=730",300,0.9166666666666666,0.015928178678960465,0.25485085886336745,nan,
+C. Pooled reliability (normal rule),pooled share with Wilson 95% CI,"normal rule, 16 settings",4800,0.938125,nan,nan,nan,"Wilson CI [0.9310, 0.9446]"
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.8, N=112",300,0.9633333333333334,0.3530219265745024,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.9, N=164",300,0.9466666666666667,0.79017657622686,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.95, N=219",300,0.9633333333333334,0.3530219265745024,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=15, Ct=0.99, N=368",300,0.9533333333333334,0.894904554817657,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.8, N=67",300,0.9566666666666667,0.691649596368412,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.9, N=99",300,0.9566666666666667,0.691649596368412,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.95, N=133",300,0.9433333333333334,0.594584640601332,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=20, Ct=0.99, N=228",300,0.96,0.5079541072273418,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.8, N=46",300,0.9266666666666666,0.08264453038286558,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.9, N=68",300,0.9333333333333333,0.18401654057847022,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.95, N=92",300,0.96,0.5079541072273418,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=200, r=25, Ct=0.99, N=159",300,0.9666666666666667,0.2313482531921774,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.8, N=235",300,0.94,0.42470742641321424,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.9, N=342",300,0.96,0.5079541072273418,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.95, N=452",300,0.9266666666666666,0.08264453038286558,1.0,nan,
+C. Reliability of the beta rule against the nominal 0.95 (E6b),"exact binomial test, H0: P(C >= Ct) = 0.95","L=400, r=20, Ct=0.99, N=740",300,0.9566666666666667,0.691649596368412,1.0,nan,
+C. Pooled reliability (beta rule),pooled share with Wilson 95% CI,"beta rule, 16 settings",4800,0.9508333333333333,nan,nan,nan,"Wilson CI [0.9443, 0.9566]"
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","coverage_only, Rc=30, Ct=0.9",500,0.264,0.0,0.0,nan,
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","joint, Rc=30, Ct=0.9",500,0.956,0.7590546158410509,1.0,nan,
+D. Joint coverage-connectivity rule (E7b),"Fisher exact test, coverage-only vs joint","Rc=30, Ct=0.9",1000,0.016509004911770056,3.3817156915152335e-127,3.719887260666757e-126,nan,odds ratio as statistic
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","coverage_only, Rc=30, Ct=0.95",500,0.688,6.253689930579627e-78,6.2536899305796265e-77,nan,
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","joint, Rc=30, Ct=0.95",500,0.968,0.9801416228369936,1.0,nan,
+D. Joint coverage-connectivity rule (E7b),"Fisher exact test, coverage-only vs joint","Rc=30, Ct=0.95",1000,0.07289680016952745,3.748423335742832e-35,3.373581002168549e-34,nan,odds ratio as statistic
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","coverage_only, Rc=40, Ct=0.9",500,0.886,9.649630340339613e-09,7.71970427227169e-08,nan,
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","joint, Rc=40, Ct=0.9",500,0.944,0.2961249733090206,1.0,nan,
+D. Joint coverage-connectivity rule (E7b),"Fisher exact test, coverage-only vs joint","Rc=40, Ct=0.9",1000,0.4610466845078799,0.0013761620823869742,0.008256972494321845,nan,odds ratio as statistic
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","coverage_only, Rc=40, Ct=0.95",500,0.924,0.0076608234559808405,0.0383041172799042,nan,
+D. Joint coverage-connectivity rule (E7b),"one-sided exact binomial test, H1: P(both targets) < 0.95","joint, Rc=40, Ct=0.95",500,0.978,0.999539992845733,1.0,nan,
+D. Joint coverage-connectivity rule (E7b),"Fisher exact test, coverage-only vs joint","Rc=40, Ct=0.95",1000,0.2734904746528899,9.725972171211386e-05,0.000680818051984797,nan,odds ratio as statistic
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","triangular, sigma=0.1r",100,1.9651586244112789,0.05219819281026907,0.5219819281026907,0.1965158624411279,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","square, sigma=0.1r",100,-0.8768758388240613,0.3826769542013653,1.0,-0.08768758388240613,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","triangular, sigma=0.2r",100,1.7417416234225966,0.08465966285364757,0.7619369656828281,0.17417416234225966,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","square, sigma=0.2r",100,0.38367112751492843,0.7020449406128099,1.0,0.03836711275149284,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","triangular, sigma=0.3r",100,-0.31644496610865125,0.7523310543411608,1.0,-0.031644496610865123,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","square, sigma=0.3r",100,-1.6310673485660114,0.10605345491718725,0.848427639337498,-0.16310673485660115,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","triangular, sigma=0.4r",100,-1.1033974685383796,0.27252946847134535,1.0,-0.11033974685383796,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","square, sigma=0.4r",100,-0.09337751283038213,0.92579236913769,1.0,-0.009337751283038214,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","triangular, sigma=0.5r",100,0.46248320109120633,0.6447497196334488,1.0,0.04624832010912064,effect size: Cohen's d
+E. Error-tolerant lattice: simulated mean against the closed-form expectation (E8),"one-sample t-test, H0: mean = Eq. (17)","square, sigma=0.5r",100,-1.393528158341317,0.16658074237358422,1.0,-0.1393528158341317,effect size: Cohen's d
+F0. Friedman test over 9 methods (E10),"Friedman test, seeds as blocks",N=25,30,202.8888888888889,1.572810780463558e-39,1.572810780463558e-39,nan,
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"Random, N=25",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VFA, N=25",30,0.0,1.862645149230957e-09,5.960464477539063e-08,1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"PSO, N=25",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GA, N=25",30,0.0,1.862645149230957e-09,5.960464477539063e-08,1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GWO, N=25",30,59.0,0.0001528710126876831,0.0001528710126876831,0.7462365591397849,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"ICGWO, N=25",30,46.0,3.453157842159271e-05,6.906315684318542e-05,0.8021505376344086,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VASF-PSO, N=25",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"DAR-SSA, N=25",30,0.0,1.862645149230957e-09,5.960464477539063e-08,1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F0. Friedman test over 9 methods (E10),"Friedman test, seeds as blocks",N=30,30,214.33777777777777,6.045201814025617e-42,1.2090403628051234e-41,nan,
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"Random, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VFA, N=30",30,0.0,1.732216233144114e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"PSO, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GA, N=30",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GWO, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"ICGWO, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VASF-PSO, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"DAR-SSA, N=30",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F0. Friedman test over 9 methods (E10),"Friedman test, seeds as blocks",N=33,30,219.81883856626848,4.20539003378147e-43,1.2616170101344408e-42,nan,
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"Random, N=33",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VFA, N=33",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"PSO, N=33",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GA, N=33",30,0.0,1.7300371292901245e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GWO, N=33",30,0.0,1.732216233144114e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"ICGWO, N=33",30,0.0,1.7333066441991056e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VASF-PSO, N=33",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"DAR-SSA, N=33",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F0. Friedman test over 9 methods (E10),"Friedman test, seeds as blocks",N=36,30,226.98832684824907,1.2835412994919496e-44,5.134165197967798e-44,nan,
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"Random, N=36",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VFA, N=36",30,0.0,3.759602684232613e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"PSO, N=36",30,0.0,1.7289484360195754e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GA, N=36",30,0.0,1.7256857880058036e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"GWO, N=36",30,0.0,1.732216233144114e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"ICGWO, N=36",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"VASF-PSO, N=36",30,0.0,1.862645149230957e-09,5.960464477539063e-08,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+F. Comparison of deployment methods (E10),Wilcoxon signed-rank against the lattice,"DAR-SSA, N=36",30,0.0,1.732216233144114e-06,2.7610972608092858e-05,-1.0,"sign of effect: negative = method below the lattice, positive = method above it"
+G. Extensions (E9),mean absolute error of the model,k-coverage,15,0.0013289229482251834,nan,nan,nan,
+G. Extensions (E9),share of settings inside the 95% CI of the simulation mean,k-coverage,15,1.0,nan,nan,nan,
+G. Extensions (E9),mean absolute error of the model,failures-coverage,9,0.0009134355923239054,nan,nan,nan,
+G. Extensions (E9),share of settings inside the 95% CI of the simulation mean,failures-coverage,9,1.0,nan,nan,nan,
+G. Extensions (E9),mean absolute error of the model,probabilistic-sensing,4,0.0017160319568427507,nan,nan,nan,
+G. Extensions (E9),share of settings inside the 95% CI of the simulation mean,probabilistic-sensing,4,1.0,nan,nan,nan,
+G. Extensions (E9),mean absolute error of the model,failures-connectivity,9,0.1560299010779279,nan,nan,nan,model is the isolated-node bound
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, unit disk, open_field_rule, N=113",500,0.968,0.9801416228369936,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, unit disk, environment_aware_rule, N=113",500,0.964,0.9440844395108052,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, unit disk, simulated_connectivity_rule, N=120",500,0.984,0.9999837318467703,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, shadowing 8 dB, open_field_rule, N=113",500,0.996,0.9999999998012915,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, shadowing 8 dB, environment_aware_rule, N=103",500,0.984,0.9999837318467703,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Open, shadowing 8 dB, simulated_connectivity_rule, N=103",500,0.98,0.9998316463654902,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, no shadowing, open_field_rule, N=113",500,0.804,5.57482948598334e-31,6.689795383180007e-30,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, no shadowing, environment_aware_rule, N=122",500,0.904,1.6101344990448227e-05,0.0001771147948949305,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, no shadowing, simulated_connectivity_rule, N=146",500,0.966,0.9657098134016047,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, shadowing 8 dB, open_field_rule, N=113",500,0.976,0.9988562118663982,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, shadowing 8 dB, environment_aware_rule, N=110",500,0.976,0.9988562118663982,1.0,nan,
+H. Rules under obstacles and shadowing (E11),"one-sided exact binomial test, H1: P(both targets) < 0.95","Urban, shadowing 8 dB, simulated_connectivity_rule, N=110",500,0.976,0.9988562118663982,1.0,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of the coverage mean,"Open, unit disk",7,0.0005116998409450442,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean relative error of the coverage std,"Open, unit disk",7,0.03963541517380557,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of P(no isolated node),"Open, unit disk",7,0.010174045863842796,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),"largest gap P(no isolated node) - P(connected), simulated, where P(no isolated) >= 0.9","Open, unit disk",4,0.019999999999999907,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of the coverage mean,"Open, shadowing 8 dB",7,0.0006619145239949363,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean relative error of the coverage std,"Open, shadowing 8 dB",7,0.015200722191962612,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of P(no isolated node),"Open, shadowing 8 dB",7,0.004254640726567465,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),"largest gap P(no isolated node) - P(connected), simulated, where P(no isolated) >= 0.9","Open, shadowing 8 dB",7,0.010000000000000009,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of the coverage mean,"Urban, no shadowing",7,0.0004887618434896078,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean relative error of the coverage std,"Urban, no shadowing",7,0.04799936060134328,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of P(no isolated node),"Urban, no shadowing",7,0.014351780797246865,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),"largest gap P(no isolated node) - P(connected), simulated, where P(no isolated) >= 0.9","Urban, no shadowing",4,0.22666666666666668,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of the coverage mean,"Urban, shadowing 8 dB",7,0.0010510426612370116,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean relative error of the coverage std,"Urban, shadowing 8 dB",7,0.061417436919936584,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),mean absolute error of P(no isolated node),"Urban, shadowing 8 dB",7,0.009100744055819053,nan,nan,nan,
+H. Model accuracy under obstacles and shadowing (E11),"largest gap P(no isolated node) - P(connected), simulated, where P(no isolated) >= 0.9","Urban, shadowing 8 dB",4,0.013333333333333308,nan,nan,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.01, Ct=0.8, N=73",1000,0.993,0.4263515926227326,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.01, Ct=0.9, N=108",1000,0.994,0.2633117394292227,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.01, Ct=0.95, N=147",1000,0.989,0.7486464598980658,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.01, Ct=0.99, N=264",1000,0.99,1.0,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.1, Ct=0.8, N=65",1000,0.929,0.001829769264783483,0.014638154118267865,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.1, Ct=0.9, N=95",1000,0.91,0.31649567158214315,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.1, Ct=0.95, N=126",1000,0.914,0.15440459983556926,1.0,nan,
+I. Beta rule at other risk levels (E12),"exact binomial test, H0: P(C >= Ct) = 1 - delta","delta=0.1, Ct=0.99, N=212",1000,0.904,0.712254725271884,1.0,nan,
+J. Sleep scheduling (E14),"one-sided exact binomial test, H1: P(both targets) < 0.95","N=113, q=1",500,0.952,0.610065962020949,1.0,nan,
+J. Sleep scheduling (E14),"one-sided exact binomial test, H1: P(both targets) < 0.95","N=170, q=0.67",500,0.954,0.6878982860930897,1.0,nan,
+J. Sleep scheduling (E14),"one-sided exact binomial test, H1: P(both targets) < 0.95","N=226, q=0.51",500,0.958,0.821149283554303,1.0,nan,
+J. Sleep scheduling (E14),"one-sided exact binomial test, H1: P(both targets) < 0.95","N=339, q=0.34",500,0.972,0.9944922453082683,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mean radius, Ct=0.8, N=67",500,0.942,0.4105284941638867,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","rms radius, Ct=0.8, N=64",500,0.914,0.0006392094744212718,0.00703130421863399,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mixture, Ct=0.8, N=66",500,0.974,0.010113498422659774,0.09102148580393796,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mean radius, Ct=0.9, N=99",500,0.962,0.25808682180444764,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","rms radius, Ct=0.9, N=94",500,0.946,0.6807127507557248,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mixture, Ct=0.9, N=97",500,0.966,0.12228635384484879,0.8560044769139415,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mean radius, Ct=0.95, N=133",500,0.982,0.00029895841522808563,0.0035875009827370276,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","rms radius, Ct=0.95, N=126",500,0.93,0.05011869060862435,0.4009495248689948,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mixture, Ct=0.95, N=129",500,0.96,0.3553214591024119,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mean radius, Ct=0.99, N=228",500,0.978,0.0026893418953174764,0.026893418953174764,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","rms radius, Ct=0.99, N=217",500,0.942,0.4105284941638867,1.0,nan,
+K. Heterogeneous radii (E15),"exact binomial test, H0: P(C >= Ct) = 0.95","mixture, Ct=0.99, N=221",500,0.964,0.18090714159399376,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","triangular, sigma=0.1r, N=33",1000,0.994,0.9999999999999998,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","square, sigma=0.1r, N=36",1000,1.0,1.0,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","triangular, sigma=0.2r, N=51",1000,0.984,0.9999999966608045,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","square, sigma=0.2r, N=49",1000,0.998,1.0,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","triangular, sigma=0.3r, N=67",1000,0.963,0.9788451675881931,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","square, sigma=0.3r, N=81",1000,0.999,1.0,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","triangular, sigma=0.4r, N=90",1000,0.98,0.9999997120308004,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","square, sigma=0.4r, N=100",1000,0.996,1.0,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","triangular, sigma=0.5r, N=119",1000,0.989,0.9999999999972022,1.0,nan,
+"L. Reliability-sized lattices, independent validation drops (E16)","one-sided exact binomial test, H1: P(C >= 0.99) < 0.95","square, sigma=0.5r, N=121",1000,0.991,0.9999999999999116,1.0,nan,

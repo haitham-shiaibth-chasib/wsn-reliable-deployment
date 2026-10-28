@@ -1,0 +1,279 @@
+# Experiment configuration for the manuscript
+#   "Reliability-Guaranteed Sensor Deployment for Wireless Sensor Networks Using
+#    Edge-Corrected Coverage Statistics and Drop-Error-Tolerant Lattices"
+#
+# Every number used by experiments/run_experiments.py comes from this file.
+# Units: lengths in metres, probabilities in [0, 1].
+#
+# Seeds. Each configuration (one cell of a parameter grid) owns one NumPy
+# PCG64 generator, created as numpy.random.default_rng(seed). All runs of that
+# configuration draw from this generator in sequence, so run i of a
+# configuration is reproduced by replaying runs 0..i. The seed of every
+# configuration is the integer given by the `seed_rule` below; the realised
+# seed is also written in every row of results/raw/*.csv and in
+# results/raw/seed_manifest.csv.
+
+global:
+  rng: "numpy.random.default_rng (PCG64)"
+  coverage_metric: "share of raster cell centres within distance r of at least one sensor"
+
+E2_mean_models:
+  description: "Mean coverage models against simulation in physical units"
+  field: 200.0
+  sensing_radius: [10, 15, 20, 25]
+  nodes: {start: 10, stop: 200, step: 10}
+  runs: 100
+  raster: 200
+  seed_base: 2000
+  seed_rule: "seed_base + 1000 * r + N"
+
+S2_connectivity_scan:
+  description: "Supplementary: connectivity of random drops for Rc = r and 2r"
+  field: 200.0
+  sensing_radius: 20.0
+  nodes: {start: 10, stop: 160, step: 10}
+  coverage_threshold: 0.9
+  runs: 200
+  raster: 200
+  seed_base: 4000
+  seed_rule: "seed_base + N"
+
+E5_lattices:
+  description: "Diameter-spaced square grid (spacing 2r), corrected square lattice and pruned triangular lattice"
+  field: 500.0
+  sensing_radius: [25.0, 31.25, 40.0, 50.0, 62.5, 75.0, 100.0]
+  verification_raster: 1000
+  design_raster: 400
+  triangular_phases: 6
+
+E6_variance_and_sizing:
+  description: "Coverage variance model and probabilistic sizing rules"
+  variance_scan:
+    field: 200.0
+    sensing_radius: 20.0
+    nodes: {start: 10, stop: 200, step: 10}
+    runs: 300
+    raster: 200
+    seed_base: 6000
+    seed_rule: "seed_base + N"
+  sizing:
+    settings:            # [field, sensing radius, simulation raster]
+      - [200.0, 15.0, 200]
+      - [200.0, 20.0, 200]
+      - [200.0, 25.0, 200]
+      - [400.0, 20.0, 300]
+    targets: [0.8, 0.9, 0.95, 0.99]
+    delta: 0.05
+    rules: [mean, normal, beta]
+    runs: 300
+    seed_base: 6100
+    seed_rule: "seed_base + int(L) + 7 * int(r) + N   (one generator per distinct N)"
+
+E7_connectivity:
+  description: "Isolated-node model and joint coverage-connectivity rule"
+  model_check:
+    field: 200.0
+    communication_range: [30.0, 40.0]
+    nodes: {start: 10, stop: 200, step: 10}
+    runs: 300
+    seed_base: 7000
+    seed_rule: "seed_base + 1000 * int(Rc) + N"
+  joint_rule:
+    field: 200.0
+    sensing_radius: 20.0
+    communication_range: [30.0, 40.0]
+    targets: [0.9, 0.95]
+    delta: 0.05
+    rules: [coverage_only, joint]
+    runs: 500
+    raster: 200
+    seed_base: 7500
+    seed_rule: "seed_base + int(Rc) + int(100 * target) + N"
+
+E8_drop_error:
+  description: "Error-tolerant lattices under Gaussian drop error"
+  field: 500.0
+  sensing_radius: 62.5
+  target: 0.99
+  delta_random_rule: 0.05
+  sigma_over_r: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
+  lattices: [triangular, square]
+  kappa_step: 0.02
+  kappa_min: 0.30
+  design_raster: 250
+  expected_raster: 150
+  simulation_raster: 200
+  runs: 100
+  seed_base: 8000
+  seed_rule: "seed_base + int(10 * sigma_over_r) + 100 * [lattice == square]"
+
+E16_reliable_lattice:
+  description: "Error-tolerant lattices sized for P(C >= target) >= 1 - delta (same field, radius and target as E8)"
+  field: 500.0
+  sensing_radius: 62.5
+  target: 0.99
+  delta: 0.05
+  sigma_over_r: [0.1, 0.2, 0.3, 0.4, 0.5]
+  lattices: [triangular, square]
+  kappa_step: 0.02
+  design_raster: 250
+  expected_raster: 150
+  simulation_raster: 200
+  search:          # kappa is lowered until the lower Wilson 95 % bound of the share of these drops with C >= target reaches 1 - delta
+    runs: 500
+    seed_base: 30000
+    seed_rule: "seed_base + 1000 * int(10 * sigma_over_r) + 100 * [lattice == square]  (same drops for every kappa)"
+  validation:      # independent drops of the selected layout
+    runs: 1000
+    seed_base: 40000
+    seed_rule: "seed_base + 1000 * int(10 * sigma_over_r) + 100 * [lattice == square]"
+
+E9_extensions:
+  description: "k-coverage, random node failures, Elfes probabilistic sensing"
+  field: 200.0
+  sensing_radius: 20.0
+  raster: 200
+  runs: 100
+  k_coverage:
+    k: [1, 2, 3]
+    nodes: [40, 80, 120, 160, 200]
+    seed_base: 9000
+    seed_rule: "seed_base + 10 * k + N"
+  failures:
+    failure_rate: [0.1, 0.2, 0.3]
+    nodes: [60, 100, 140]
+    communication_range: 40.0
+    seed_base: 9100
+    seed_rule: "seed_base + int(100 * f) + N"
+  elfes:
+    uncertainty_margin: 5.0      # r_e
+    lambda: 0.1
+    beta: 1.0
+    nodes: [40, 80, 120, 160]
+    seed_base: 9200
+    seed_rule: "seed_base + N"
+
+E10_baselines:
+  description: "Proposed lattice against eight baselines under an equal evaluation budget"
+  field: 500.0
+  sensing_radius: 62.5
+  nodes: [25, 30, 33, 36]
+  seeds_per_method: 30
+  seed_base: 10000
+  seed_rule: "seed_base + 37 * N + k,  k = 0..29 (the same seeds for every method: paired design)"
+  evaluation_raster: 250
+  lattice_design_raster: 250
+  connectivity_range_factor: 1.7320508075688772   # Rc = sqrt(3) r
+  robustness:
+    sigma_over_r: 0.2
+    draws: 20
+    raster: 150
+    seed_rule: "run seed + 1"
+  budget:
+    population: 30
+    iterations: 300
+    fitness_raster: 80          # 9,030 fitness evaluations per run including initialisation
+  methods:
+    Random: {}
+    VFA: {iterations: 400, threshold_factor: 1.7320508075688772, step_factor: 0.25, step_floor_factor: 0.01,
+          attraction_range_factor: 1.5, attraction_weight: 0.05, border_repulsion: "within threshold / 2"}
+    PSO: {w: 0.729, c1: 1.49445, c2: 1.49445}
+    GWO: {a_schedule: "linear 2 -> 0", leaders: "elitist (best three found so far, Mirjalili et al. 2014)"}
+    ICGWO: {initialisation: "logistic map, mu = 4", a_schedule: "2 (1 - (t/T)^2)", leaders: "elitist"}
+    VASF-PSO: {initialisation: "Hammersley with random shift", w: [0.9, 0.4], c1: [2.5, 0.5], c2: [0.5, 2.5],
+               search_factor_floor: 0.2}
+    DAR-SSA: {producer_share: [0.8, 0.2], ST: 0.8, SD: 0.2, repulsion_length_factor: 0.8660254037844386,
+              repulsion_step_factor: 0.15, returned_layout: "best found during the run (archive); search dynamics unchanged"}
+    GA: {selection: "binary tournament", crossover: "BLX-alpha, alpha = 0.5, pc = 0.9", mutation: "Gaussian, pm = 1/dim, sigma = 0.05 L", elitism: 2,
+         replacement: "elite + best offspring", returned_layout: "best found during the run"}
+    Proposed lattice: {design_radius_search: [0.3, 3.0], bisection_steps: 18, phases: 4}
+
+E11_environment:
+  description: "Obstacles with line-of-sight sensing and log-normal shadowing of the radio links"
+  field: 200.0
+  sensing_radius: 20.0
+  median_range: 40.0          # Rc, distance at which the mean path loss equals the link budget
+  path_loss_exponent: 3.0
+  penetration_loss_db: 20.0   # extra loss of a link that crosses a building
+  target: 0.9
+  delta: 0.05
+  urban_obstacles:            # nine 40 m x 40 m blocks, 36 % of the field: [x0, y0, x1, y1]
+    - [20, 20, 60, 60]
+    - [20, 80, 60, 120]
+    - [20, 140, 60, 180]
+    - [80, 20, 120, 60]
+    - [80, 80, 120, 120]
+    - [80, 140, 120, 180]
+    - [140, 20, 180, 60]
+    - [140, 80, 180, 120]
+    - [140, 140, 180, 180]
+  scenarios:
+    - {name: "Open, unit disk", obstacles: false, shadowing_db: 0.0}
+    - {name: "Open, shadowing 8 dB", obstacles: false, shadowing_db: 8.0}
+    - {name: "Urban, no shadowing", obstacles: true, shadowing_db: 0.0}
+    - {name: "Urban, shadowing 8 dB", obstacles: true, shadowing_db: 8.0}
+  model_check:
+    nodes: [40, 60, 80, 100, 120, 140, 160]
+    runs: 300
+    raster: 200
+    seed_base: 11000
+    seed_rule: "seed_base + 1000 * scenario_index + N"
+  simulated_connectivity:     # connectivity term of the third rule, estimated by simulation
+    runs: 2000
+    seed_base: 21000
+    seed_rule: "seed_base + 1000 * scenario_index + N"
+    search: "start at the analytical N_conn, steps of 5 nodes, then refine to single nodes"
+  rule_check:
+    rules: [open_field_rule, environment_aware_rule, simulated_connectivity_rule]
+    runs: 500
+    raster: 200
+    seed_base: 16000
+    seed_rule: "seed_base + 1000 * scenario_index + {0, 500, 250}[rule] + N"
+  model_grids: {variance: 80, node_cells: 200, mean: 200, link_positions: 100, link_cells: 200}
+
+E12_risk_sensitivity:
+  description: "Beta rule at other risk levels (delta = 0.05 is E6b)"
+  field: 200.0
+  sensing_radius: 20.0
+  targets: [0.8, 0.9, 0.95, 0.99]
+  delta: [0.01, 0.10]
+  runs: 1000
+  raster: 200
+  seed_base: 12000
+  seed_rule: "seed_base + 1000 * int(1000 * delta) + N"
+
+E13_ilp:
+  description: "Minimum-node full cover by integer linear programming (HiGHS)"
+  field: 500.0
+  sensing_radius: 62.5
+  demand_spacing: 10.0
+  candidate_spacing: 10.0
+  time_limit_s: 1200
+  evaluation_raster: 250
+
+E14_sleep_scheduling:
+  description: "Randomized sleep scheduling on top of the joint rule"
+  field: 200.0
+  sensing_radius: 20.0
+  communication_range: 40.0
+  target: 0.9
+  delta: 0.05
+  multipliers: [1.0, 1.5, 2.0, 3.0]
+  q_step: 0.01
+  runs: 500
+  raster: 200
+  seed_base: 14000
+  seed_rule: "seed_base + N"
+  energy: {model: "first-order radio", e_elec: 5.0e-8, eps_amp: 1.0e-10, bits: 2000, initial_energy_J: 0.5}
+
+E15_heterogeneous:
+  description: "Two sensing radii in equal shares"
+  field: 200.0
+  radii: [15.0, 25.0]
+  weights: [0.5, 0.5]
+  targets: [0.8, 0.9, 0.95, 0.99]
+  delta: 0.05
+  runs: 500
+  raster: 200
+  seed_base: 15000
+  seed_rule: "seed_base + 1000 * int(100 * target) + N"
