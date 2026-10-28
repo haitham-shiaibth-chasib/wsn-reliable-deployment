@@ -1,5 +1,7 @@
 # wsn-reliable-deployment
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23717649.svg)](https://doi.org/10.5281/zenodo.23717649)
+
 Code, configuration, raw data and figures for the article
 
 > H. S. Chasib and I. J. K. Al-Ogaili, *Reliability-Guaranteed Sensor Deployment for Wireless Sensor Networks Using
@@ -150,6 +152,9 @@ so every optimiser returns the best layout found during its run.
 * Full reproduction takes about 5 h on 2 cores; E13 alone runs two 20-minute HiGHS solves.
 
 ## License and citation
+
+The version used in the article (v1.2.0) is archived at Zenodo: https://doi.org/10.5281/zenodo.23717649
+(all versions: https://doi.org/10.5281/zenodo.23717648).
 
 Code is released under the MIT License (`LICENSE`); data and figures under the same terms. Citation
 metadata are in `CITATION.cff`.

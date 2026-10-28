@@ -20,11 +20,13 @@ _ap.add_argument("--root", default=os.path.dirname(HERE), help="repository root 
 _ap.add_argument("--template", default=os.path.join(HERE, "IJIES_Format.docx"),
                  help="IJIES Word template (download from the journal web site)")
 _ap.add_argument("--out", default=os.path.join(HERE, "IJIES_Manuscript_Reliable_WSN_Deployment.docx"))
+_ap.add_argument("--doi", default="10.5281/zenodo.23717649", help="Zenodo DOI of the archived code version")
 _ap.add_argument("--github", default="https://github.com/haitham-shiaibth-chasib/wsn-reliable-deployment")
 ARGS = _ap.parse_args()
 ROOT = ARGS.root
 RES, FIG = os.path.join(ROOT, "results"), os.path.join(ROOT, "figures")
 TEMPLATE, OUT, GITHUB = ARGS.template, ARGS.out, ARGS.github
+ZENODO_DOI = f"https://doi.org/{ARGS.doi}"
 if not os.path.exists(TEMPLATE):
     raise SystemExit(f"IJIES template not found: {TEMPLATE}\nDownload it from the journal web site and pass --template.")
 
@@ -862,7 +864,8 @@ d.p("Sizing a random drop for the expected coverage misses the target about half
 
 d.h1("Code availability")
 d.p(f"The implementation code is publicly available at: {GITHUB}. It includes all parameters, seeds, raw runs, layouts, "
-    "statistical scripts and unit tests, and one script that reproduces every table and figure.")
+    "statistical scripts and unit tests, and one script that reproduces every table and figure. The version used in "
+    f"this article (v1.2.0) is archived at Zenodo, DOI: {ZENODO_DOI}.")
 d.h1("Funding")
 d.p("This research received no external funding.")
 d.h1("Conflicts of interest")

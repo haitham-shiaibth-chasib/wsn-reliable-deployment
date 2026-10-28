@@ -4,6 +4,7 @@ title: "wsn-reliable-deployment: code and data for reliability-guaranteed sensor
 version: 1.2.0
 date-released: 2026-10-27
 license: MIT
+doi: 10.5281/zenodo.23717648
 repository-code: "https://github.com/haitham-shiaibth-chasib/wsn-reliable-deployment"
 keywords:
   - wireless sensor networks
