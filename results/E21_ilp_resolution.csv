@@ -1,0 +1,6 @@
+spacing,variant,nodes,dual_bound,gap,coverage,status,seconds,rho,candidates,demand_points
+20.0,demand points,25,24.99999999999982,0.0,0.965518,Optimization terminated successfully. (HiGHS Status 7: Optimal),0.43160343170166016,62.5,676,625
+20.0,guaranteed,49,49.0,0.0,1.0,Optimization terminated successfully. (HiGHS Status 7: Optimal),1.118546485900879,48.35786437626905,676,625
+12.5,demand points,25,24.9999999999925,0.0,0.9716,Optimization terminated successfully. (HiGHS Status 7: Optimal),7.492502450942993,62.5,1681,1600
+12.5,guaranteed,38,37.99999999999948,0.0,1.0,Optimization terminated successfully. (HiGHS Status 7: Optimal),123.3748550415039,53.661165235168156,1681,1600
+0,continuous lower bound (Fejes Toth),25,,,,,,,,

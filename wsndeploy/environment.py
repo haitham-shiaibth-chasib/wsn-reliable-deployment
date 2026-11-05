@@ -147,6 +147,32 @@ def connectivity_shadow(fld: Field, radio: Radio, sensors, rng):
     return bool(k == 1), bool(np.all(deg > 0))
 
 
+def connectivity_shadow_corr(fld: Field, radio: Radio, sensors, rng, rho=0.0):
+    """(connected, no isolated node) when the shadowing of links that share a node is correlated.
+
+    The shadowing of link (i, j) is sigma_db * (sqrt(rho) (Z_i + Z_j) / sqrt(2) + sqrt(1 - rho) W_ij)
+    with independent standard normal node terms Z and link terms W, so every link keeps the marginal
+    probability of `Radio.link_prob` while two links that share a node have shadowing correlation
+    rho / 2. rho = 0 reproduces `connectivity_shadow` in distribution.
+    """
+    n = len(sensors)
+    if n <= 1:
+        return n == 1, n == 1
+    i, j = np.triu_indices(n, 1)
+    d = np.maximum(np.linalg.norm(sensors[i] - sensors[j], axis=1), 1e-9)
+    b = fld.blocked(sensors[i], sensors[j]) if fld.obstacles else np.zeros(len(i), dtype=bool)
+    margin = 10 * radio.eta * np.log10(radio.Rc / d) - radio.pen_db * b
+    z = rng.standard_normal(n)
+    shade = radio.sigma_db * (math.sqrt(rho) * (z[i] + z[j]) / math.sqrt(2)
+                              + math.sqrt(1 - rho) * rng.standard_normal(len(i)))
+    keep = margin + shade >= 0
+    i, j = i[keep], j[keep]
+    deg = np.bincount(np.concatenate([i, j]), minlength=n)
+    g = coo_matrix((np.ones(len(i)), (i, j)), shape=(n, n))
+    k, _ = connected_components(g, directed=False)
+    return bool(k == 1), bool(np.all(deg > 0))
+
+
 # ----------------------------------------------------------------------------- analytical
 class EnvironmentModel:
     """Coverage and connectivity statistics of N uniform drops over the free area."""

@@ -240,10 +240,11 @@ def _hammersley(n, rng):
     return (pts + rng.random(2)) % 1.0
 
 
-def vasf_pso(L, r, n, rng, particles=30, iters=300, res=80):
+def vasf_pso(L, r, n, rng, particles=30, iters=300, res=80, w_start=0.9, w_end=0.4, sf_floor=0.2):
     """Re-implementation of VASF-PSO (Haris and Nam, 2025) from its description:
     Hammersley initialisation, linearly decreasing inertia, time-varying c1/c2, and a
-    velocity-scaled adaptive search factor that shrinks steps of particles close to gbest."""
+    velocity-scaled adaptive search factor that shrinks steps of particles close to gbest.
+    w_start, w_end and sf_floor are the settings varied in the sensitivity study (E24)."""
     f = CoverageFitness(L, r, n, res)
     dim = 2 * n
     X = np.array([(_hammersley(n, rng) * L).ravel() for _ in range(particles)])
@@ -254,10 +255,10 @@ def vasf_pso(L, r, n, rng, particles=30, iters=300, res=80):
     vmax = L / 5
     for t in range(iters):
         tau = t / iters
-        w = 0.9 - 0.5 * tau
+        w = w_start - (w_start - w_end) * tau
         c1, c2 = 2.5 - 2.0 * tau, 0.5 + 2.0 * tau
         dist = np.linalg.norm(X - g, axis=1)
-        sf = np.clip(dist / (dist.max() + 1e-9), 0.2, 1.0)[:, None]   # adaptive search factor
+        sf = np.clip(dist / (dist.max() + 1e-9), sf_floor, 1.0)[:, None]   # adaptive search factor
         r1, r2 = rng.random((particles, dim)), rng.random((particles, dim))
         V = np.clip(w * V + c1 * r1 * (P - X) + c2 * r2 * (g - X), -vmax, vmax) * sf
         X = np.clip(X + V, 0, L)
@@ -379,10 +380,10 @@ def _logistic(shape, rng, mu=4.0, burn=20):
     return np.clip(x, 1e-6, 1 - 1e-6)
 
 
-def icgwo(L, r, n, rng, wolves=30, iters=300, res=80):
+def icgwo(L, r, n, rng, wolves=30, iters=300, res=80, a_exp=2.0):
     """Re-implementation of an improved chaotic GWO (Shaikh et al., 2025) from its description:
-    logistic-map initialisation of the pack and a non-linear (quadratic) decay of a;
-    the leader-following update is the standard elitist GWO one."""
+    logistic-map initialisation of the pack and a non-linear decay a = 2 (1 - (t/T)^a_exp)
+    (quadratic by default); the leader-following update is the standard elitist GWO one."""
     f = CoverageFitness(L, r, n, res)
     dim = 2 * n
     X = _logistic((wolves, dim), rng) * L
@@ -390,7 +391,7 @@ def icgwo(L, r, n, rng, wolves=30, iters=300, res=80):
     lead = _Leaders()
     lead.update(X, fit)
     for t in range(iters):
-        a = 2 * (1 - (t / iters) ** 2)
+        a = 2 * (1 - (t / iters) ** a_exp)
         newX = np.zeros_like(X)
         for leader in lead:
             A = 2 * a * rng.random((wolves, dim)) - a

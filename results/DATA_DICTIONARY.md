@@ -68,3 +68,29 @@ run in Table 9).
 | `raw/E12_runs.csv`, `raw/E14_runs.csv`, `raw/E15_runs.csv` | – | run | one row per simulated drop (E14: per round, with `coverage`, `connected`, `both`) |
 
 `E10_baselines_summary.csv` and `raw/E10_runs.csv` now also contain the method `GA`.
+
+## Version 1.3 additions (revision)
+
+Manuscript references in this section follow the revised numbering. In every certification file a row is
+one attempt of Algorithm 3: `attempt`, `seed` (fresh for every attempt), `runs` (2,000 drops), `met`,
+`share`, `lower_bound` (one-sided Clopper-Pearson bound at level `alpha_attempt` = 0.05 / 10) and
+`certified` (`lower_bound` ≥ 1 − δ). A design is certified at the first attempt that passes; the
+certified value is repeated in `N_certified` (or `nodes_certified`, `kappa_certified`) and is empty when
+no attempt passed.
+
+| File | Manuscript | One row per | Columns |
+|---|---|---|---|
+| `E17_certification.csv` | Sec. 6.3, Table 8 | (part, setting, target, attempt) | `part` in {coverage, joint, environment}; `setting` / `scenario`; `L`, `r`, `Rc`, `target`; `N_rule` (analytical or simulated rule), `N` (design of this attempt), `N_certified`; attempt columns |
+| `E18_certified_lattice.csv` | Sec. 6.6, Table 10 | (σ/r, lattice, attempt) | `kappa_design`, `design_share`, `design_lower` (search sample, E16 or own search); `kappa`, `nodes` of this attempt; `kappa_certified`, `nodes_certified`; `expected` (Eq. 18); `mean_coverage`; `connected_share_1.732r`, `connected_share_2.000r` (share of certification drops whose network is connected at Rc = √3 r and 2r); attempt columns |
+| `E19_stress.csv` | Sec. 6.10, Table 14 | setting | `name`, `Lx`, `Ly`, `area`, `r`, `target`, `N_rule`; at the rule value: `predicted_at_rule`, `observed_at_rule`, `lower_at_rule` (two-sided 95 % Clopper-Pearson), `q01_at_rule` (1 % quantile of coverage); `N_certified`, `attempts`, `certified_share`, `certified_lower` |
+| `E19_calibration.csv` | Sec. 6.10, Fig. 9 | (setting, factor) | `factor` × `N_rule` = `N`; `predicted` (Beta rule), `observed` (share of 1,000 drops), `lower`, `upper` (two-sided 95 % Clopper-Pearson), `model_mean`, `mc_mean`, `mc_std`, `q01`, `q05` |
+| `E19_correlated_shadowing.csv` | Sec. 6.10 | (rho, attempt) | `rho` (node-shared share of the shadowing variance), `link_correlation` = rho / 2; the independent-shadowing rule `N_rule` on 2,000 drops: `rule_met`, `rule_share`, `rule_lower`, `rule_upper`, `rule_p_conn`; `N_design` and `design_path` (design sample, 1,000 drops per step); `N`, `N_certified`, `p_cov`, `p_conn`; attempt columns |
+| `E20_schedule_conditional.csv` | Sec. 6.11, Table 16 | multiplier | `N`, `q`, `deployments`, `rounds`; over deployments of the per-deployment success rate: `ensemble` (mean), `q05`, `q50`, `min`, `share_below` (rate < 0.95), `share_certainly_below` (one-sided 95 % upper bound < 0.95), `share_certainly_above` (one-sided 95 % lower bound ≥ 0.95) |
+| `E21_ilp_resolution.csv` | Sec. 6.5 | (spacing, variant) | as `E13_ilp.csv` for 20 m and 12.5 m grids; last row: continuous lower bound of Fejes Tóth (n ≥ A / (3√3 r² / 2)) |
+| `E22_fixed_counts.csv` | Sec. 6.11 | (target, rule) | `rule` in {fixed-count rule (Eq. 24), mixture rule (Eq. 23)}; `N`, `counts` (nodes per radius), `runs`, `met`, `p_meet`, `lower` (one-sided 95 %); `mc_mean`, `mc_std`; `model_mean_fixed`, `model_std_fixed`, `model_mean_mixture`, `model_std_mixture`, `model_p_fixed` |
+| `E23_runtime.csv` | Sec. 6.7, Table 13 | task | `phase` (offline, baseline, online), `task`, `repetitions`, `median_s`, `min_s` (wall clock), `peak_traced_MiB` (tracemalloc peak), `seed`, `fitness_evals`, `N`; machine description repeated in `cpu`, `logical_cpus`, `python`, `numpy` |
+| `E23_hardware.csv` | Table 13 | – | `cpu`, `logical_cpus`, `python`, `numpy`, `platform`, `process_peak_rss_MiB` |
+| `E24_baseline_sensitivity.csv` | Sec. 6.7, Table 12 | (method, variant) | `N`, `runs` (10 seeds, the first ten seeds of E10 at N = 33), `mean`, `std`, `worst`, `best`, `full_cover_runs`, `connected_share` (Rc = √3 r), `evals` |
+| `E25_checks.csv` | Secs. 4.2, 4.5, 6.5 | check | `lattice connectivity`: `kind`, `r`, `N`, `Rc`, `connected`, `min_degree`, `max_nn_over_Rc`, `coverage_fine_raster`, `exact_cover` (raster-free test); `diameter grid spacing`: `spacing`, `spacing_over_sqrt2r`, `full_cover_condition`, `exact_cover`, `note` (L/(2r)); `variance decomposition`: `N`, `var_near` (pairs closer than 2r), `var_far` (pairs farther apart, negative), `var_total`, `far_share` |
+| `raw/E17_runs.csv`, `raw/E18_runs.csv`, `raw/E19_runs.csv`, `raw/E20_runs.csv`, `raw/E22_runs.csv`, `raw/E24_runs.csv` | – | drop, round or run | one row per certification drop (with `coverage`, `connected` where relevant), per calibration drop (`part` = calibration), per deployment (E20: `met` of `rounds`, `rate`, one-sided bounds), per optimiser run (E24) |
+| `layouts/E18_<lattice>_sigma<σ/r>r.csv`, `layouts/E21_*`, `layouts/E24_*` | – | node | certified lattices (planned positions), integer-program layouts, sensitivity runs |

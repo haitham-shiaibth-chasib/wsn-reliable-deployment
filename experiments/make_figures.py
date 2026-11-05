@@ -83,28 +83,56 @@ def save(fig, name):
 
 # ----------------------------------------------------------------------------- Fig 1 framework
 def fig_framework():
-    fig, ax = plt.subplots(figsize=(W, 3.6))
+    fig, ax = plt.subplots(figsize=(W, 4.3))
     ax.set_xlim(-0.2, 10.2)
-    ax.set_ylim(0, 15.95)
+    ax.set_ylim(0, 18.55)
     ax.axis("off")
     boxes = [
-        (13.4, "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ"),
-        (10.8, "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)"),
-        (8.2, "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)"),
-        (5.6, "Connectivity rule: smallest N with\nP(no isolated node) ≥ 1 − δ/2"),
-        (3.0, "Random drop: N = max of both rules\nPlanned drop: error-tolerant lattice"),
-        (0.4, "Output: node count, layout and\npredicted reliability"),
+        (16.0, "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ"),
+        (13.4, "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)"),
+        (10.8, "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)"),
+        (8.2, "Connectivity rule: smallest N with\nP(no isolated node) ≥ 1 − δ/2"),
+        (5.6, "Design: random drop, N = larger rule;\nplanned drop, error-tolerant lattice"),
+        (3.0, "Certification on fresh drops: accept\nif lower bound ≥ 1 − δ, else enlarge"),
+        (0.4, "Output: certified node count or layout\n(or: not certified)"),
     ]
+    last = len(boxes) - 1
     for i, (y, text) in enumerate(boxes):
-        fc = "#eaf1fb" if i not in (0, 5) else "#f3f2ee"
+        grey = i in (0, last)
+        fc = "#f3f2ee" if grey else ("#e7f6ef" if i == 5 else "#eaf1fb")
+        ec = MUTED if grey else (C3 if i == 5 else C1)
         hgt = 2.4 if i == 0 else 1.75
-        ax.add_patch(FancyBboxPatch((0.0, y - 0.05), 10.0, hgt, boxstyle="round,pad=0.08",
-                                    fc=fc, ec=C1 if i not in (0, 5) else MUTED, lw=1.0))
+        ax.add_patch(FancyBboxPatch((0.0, y - 0.05), 10.0, hgt, boxstyle="round,pad=0.08", fc=fc, ec=ec, lw=1.0))
         ax.text(5, y + hgt / 2 - 0.05, text, ha="center", va="center", fontsize=10, color=INK)
-        if i < len(boxes) - 1:
+        if i < last:
             ax.annotate("", xy=(5, boxes[i + 1][0] + 1.85), xytext=(5, y - 0.15),
                         arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.0))
     save(fig, "paper_fig1_framework.png")
+
+
+def fig_calibration():
+    """Predicted P(C >= Ct) of the Beta rule against the observed share of 1,000 drops (E19)."""
+    rows = load("E19_calibration.csv")
+    groups = list(dict.fromkeys(q["name"] for q in rows))
+    style = {"small N": (C1, "o"), "very high target": (C2, "s"), "rectangle 2:1": (C3, "^"),
+             "rectangle 4:1": (C4, "v"), "L-shaped field": (C5, "D"), "field with a hole": (C6, "P")}
+    fig, ax = plt.subplots(figsize=(W, 2.5))
+    ax.plot([0, 1], [0, 1], color=INK, lw=0.8, ls="--", zorder=1)
+    for g in groups:
+        q = [x for x in rows if x["name"] == g]
+        col, mk = style.get(g, (MUTED, "o"))
+        ax.errorbar([x["predicted"] for x in q], [x["observed"] for x in q],
+                    yerr=[[x["observed"] - x["lower"] for x in q], [x["upper"] - x["observed"] for x in q]],
+                    fmt=mk, ms=3.2, color=col, ecolor=col, elinewidth=0.6, capsize=0, lw=0, label=g, zorder=2)
+    lo = min(min(x["predicted"] for x in rows), min(x["lower"] for x in rows))
+    lo = max(0.0, math.floor(lo * 20) / 20)
+    ax.set_xlim(lo, 1.0)
+    ax.set_ylim(lo, 1.0)
+    ax.set_xlabel("Predicted P(C ≥ $C_t$), Beta rule")
+    ax.set_ylabel("Observed share of drops")
+    ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, handletextpad=0.2, columnspacing=0.6,
+              labelspacing=0.2, handlelength=1.0, borderaxespad=0.2)
+    save(fig, "paper_fig11_calibration.png")
 
 
 # ----------------------------------------------------------------------------- Fig 2 model accuracy
@@ -214,29 +242,36 @@ def fig_grid_gaps():
 # ----------------------------------------------------------------------------- Fig 7 placement error
 def fig_placement():
     rows = load("E8_placement_error.csv")
-    rel = load("E16_reliable_lattice.csv")
-    fig, ax = plt.subplots(figsize=(W, 2.2))
+    cert = {}
+    for x in load("E18_certified_lattice.csv"):                 # last attempt = certified design
+        cert[(x["sigma_over_r"], x["kind"])] = x
+    e17 = load("E17_certification.csv")
+    n_cert = [x for x in e17 if x["part"] == "coverage" and x["L"] == 200 and x["r"] == 25 and x["target"] == 0.99]
+    n_cert = int(n_cert[-1]["N_certified"])                    # same L / r as the 500 m field with r = 62.5 m
+    fig, ax = plt.subplots(figsize=(W, 2.3))
     for kind, col, mk in (("triangular", C4, "o"), ("square", C3, "s")):
         q = [x for x in rows if x["kind"] == kind]
         ax.plot([x["sigma_over_r"] for x in q], [x["robust_nodes"] for x in q], color=col, marker=mk, ms=4)
-        z = [x for x in rows if x["kind"] == kind and x["sigma_over_r"] == 0] + \
-            sorted([x for x in rel if x["kind"] == kind], key=lambda x: x["sigma_over_r"])
-        ax.plot([x["sigma_over_r"] for x in z], [x.get("nodes", x.get("robust_nodes")) for x in z], color=col,
-                marker=mk, ms=4, ls="--", mfc="white")
-    n_beta, n_mean = rows[0]["random_guaranteed_rule"], rows[0]["random_mean_rule"]
-    ax.axhline(n_beta, color=C2, ls="--")
+        z0 = [x for x in rows if x["kind"] == kind and x["sigma_over_r"] == 0]
+        z = sorted([x for (sg, k), x in cert.items() if k == kind and x["nodes_certified"] != ""],
+                   key=lambda x: x["sigma_over_r"])
+        ax.plot([0.0] + [x["sigma_over_r"] for x in z], [z0[0]["robust_nodes"]] + [x["nodes_certified"] for x in z],
+                color=col, marker=mk, ms=4, ls="--", mfc="white")
+    n_mean = rows[0]["random_mean_rule"]
+    ax.axhline(n_cert, color=C2, ls="--")
     ax.axhline(n_mean, color=C2, ls="-")
-    ax.text(0.0, n_beta + 3, "Random drop, P(C ≥ 0.99) ≥ 0.95", ha="left", va="bottom", color=INK)
-    ax.text(0.0, n_mean + 3, "Random drop, E[C] ≥ 0.99", ha="left", va="bottom", color=INK)
+    ax.text(0.0, n_cert + 3, "Random, certified", ha="left", va="bottom", color=INK)
+    ax.text(1.03, n_mean - 3, "Random, E[C] ≥ 0.99", ha="right", va="top", color=INK)
     ax.set_xlabel("Drop error σ / r")
     ax.set_ylabel("Sensors needed")
-    ax.set_ylim(0, n_beta * 1.18)
-    ax.set_xlim(-0.02, 0.52)
+    top = max(n_cert, max(x["nodes_certified"] for x in cert.values() if x["nodes_certified"] != ""))
+    ax.set_ylim(0, top * 1.15)
+    ax.set_xlim(-0.03, 1.03)
     ax.text(0.0, 46, "Square", ha="left", va="bottom", color=C3)
     ax.text(0.0, 27, "Triangular", ha="left", va="top", color=C4)
     from matplotlib.lines import Line2D
     ax.legend([Line2D([], [], color=MUTED), Line2D([], [], color=MUTED, ls="--")],
-              ["E[C] ≥ 0.99", "P(C ≥ 0.99) ≥ 0.95"], loc="lower right", bbox_to_anchor=(1.04, -0.03), borderaxespad=0.0,
+              ["E[C] ≥ 0.99", "certified"], loc="lower right", bbox_to_anchor=(1.04, -0.03), borderaxespad=0.0,
               handlelength=1.2, handletextpad=0.4, frameon=False)
     save(fig, "paper_fig7_placement.png")
 
@@ -312,7 +347,7 @@ if __name__ == "__main__":
     which = sys.argv[1:] or ["all"]
     table = {"1": fig_framework, "2": fig_models, "3": fig_variance, "4": fig_sizing, "5": fig_connectivity,
              "6": fig_grid_gaps, "7": fig_placement, "8": fig_baselines, "9": fig_extensions,
-             "10": fig_environment}
+             "10": fig_environment, "11": fig_calibration}
     for k, fn in table.items():
         if "all" in which or k in which:
             try:

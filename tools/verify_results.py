@@ -19,7 +19,8 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RES = os.path.join(ROOT, "results")
 LIST = os.path.join(RES, "CHECKSUMS.sha256")
-MACHINE_DEPENDENT = {"seconds"}
+MACHINE_DEPENDENT = {"seconds", "median_s", "min_s", "peak_traced_MiB", "process_peak_rss_MiB", "cpu",
+                     "logical_cpus", "python", "numpy", "platform"}
 
 
 def canonical_hash(path):

@@ -272,3 +272,104 @@ def test_reliable_lattice_meets_its_confidence_criterion():
     assert lo >= 0.8 and kappa <= 1.0
     x = placement.mc_coverage_perturbed(lay, r, sigma, L, 60, np.random.default_rng(3), 100)
     assert wilson(int(np.sum(x >= 0.95)), 60)[1] == pytest.approx(lo)
+
+
+# ----------------------------------------------------------------------------- revision: certification and checks
+from wsndeploy import certify as CERT, domain as DOM  # noqa: E402
+
+
+def test_far_pairs_have_negative_covariance_and_are_kept():
+    """For a fixed N, two points more than 2r apart are negatively correlated (Eq. 5), and the
+    numerical variance keeps these terms: truncating at 2r would give a larger value."""
+    L, r, n = 200.0, 20.0, 10
+    a = math.pi * r * r / (L * L)
+    assert (1 - 2 * a) ** n - (1 - a) ** (2 * n) < 0
+    S, T = R._pair_matrix(L, r, 50, 200)
+    p = np.asarray(S.sum(axis=1)).ravel()
+    w = S[0].data[0]
+    pij = (T @ T.T).toarray() * w
+    cov = (1 - p[:, None] - p[None, :] + pij) ** n - ((1 - p) ** n)[:, None] * ((1 - p) ** n)[None, :]
+    X = sim.raster(L, 50)
+    far = np.linalg.norm(X[:, None, :] - X[None, :, :], axis=-1) > 2 * r
+    assert cov[far].max() < 0
+    full = cov.mean()
+    assert R.var_cov_exact(n, r, L, coarse=50) == pytest.approx(full, rel=1e-9)
+    assert np.where(far, 0.0, cov).mean() > full
+
+
+def test_clopper_pearson_lower_bound_and_threshold():
+    from scipy import stats
+    assert CERT.cp_lower(0, 100, 0.05) == 0.0
+    assert CERT.cp_lower(90, 100, 0.05) == pytest.approx(stats.beta.ppf(0.05, 90, 11))
+    k_min = next(k for k in range(2001) if CERT.cp_lower(k, 2000, 0.005) >= 0.95)
+    assert k_min == 1925
+    # coverage of the one-sided bound at p = 0.95: P(LB >= 0.95) <= alpha'
+    pmf = stats.binom.pmf(np.arange(2001), 2000, 0.95)
+    assert pmf[k_min:].sum() <= 0.005
+
+
+def test_certify_sequence_uses_fresh_seeds_and_reports_failure():
+    seen = []
+
+    def sample(d, n, seed):
+        seen.append(seed)
+        rng = np.random.default_rng(seed)
+        return list(rng.random(n) < d)
+
+    d, log = CERT.certify_sequence([0.90, 0.93, 0.999], sample, 2000, 0.05, 0.05, 10, lambda j: 100 + j)
+    assert d == 0.999 and len(log) == 3 and seen == [100, 101, 102]
+    assert all(rec["alpha_attempt"] == 0.005 for _, rec in log)
+    d, log = CERT.certify_sequence([0.9] * 20, sample, 500, 0.05, 0.05, 10, lambda j: j)
+    assert d is None and len(log) == 10
+
+
+def test_fixed_counts_with_equal_radii_reduce_to_homogeneous_model():
+    L = 200.0
+    assert R.mean_cov_fixed([50, 50], [20.0, 20.0], L) == pytest.approx(R.mean_cov(100, 20.0, L), rel=1e-9)
+    assert R.var_cov_exact_fixed([50, 50], [20.0, 20.0], L) == pytest.approx(R.var_cov_exact(100, 20.0, L), rel=1e-6)
+    # the mixture variance carries the class-count variation and is larger
+    assert R.var_cov_exact_mix(66, [15.0, 25.0], [0.5, 0.5], L) > R.var_cov_exact_fixed([33, 33], [15.0, 25.0], L)
+
+
+def test_general_domain_model_matches_square_model():
+    model = DOM.DomainModel(DOM.square(200.0), 20.0)
+    assert model.mean(100) == pytest.approx(R.mean_cov(100, 20.0, 200.0), abs=2e-3)
+    assert math.sqrt(model.var(100)) == pytest.approx(math.sqrt(R.var_cov_exact(100, 20.0, 200.0)), rel=0.05)
+    dom = DOM.Domain(200.0, 200.0, [(100, 100, 200, 200)])
+    assert dom.area == pytest.approx(30000.0)
+    pts = dom.sample(500, np.random.default_rng(0))
+    assert np.all(dom.inside(pts))
+
+
+def test_exact_cover_test_agrees_with_geometry():
+    L = 500.0
+    pts = sim.raster(L, 250)
+    for r in (50.0, 62.5):
+        tri = grid.triangular_grid(L, r, pts, phases=4)
+        assert grid.covers_square_exactly(tri, L, r)[0]
+        assert grid.covers_square_exactly(grid.square_grid(L, r), L, r)[0]
+        assert not grid.covers_square_exactly(grid.diameter_grid(L, r), L, r)[0]       # L/(2r) integer: pi/4
+    r = L / 2.2                                                                         # L/(2r) = 1.1: covered
+    assert grid.covers_square_exactly(grid.diameter_grid(L, r), L, r)[0]
+    r = L / 3.0                                                                         # L/(2r) = 1.5: not covered
+    assert not grid.covers_square_exactly(grid.diameter_grid(L, r), L, r)[0]
+    s = np.array([[30.0, 50.0], [70.0, 50.0], [50.0, 10.0], [50.0, 90.0]])
+    assert not grid.covers_square_exactly(s, 100.0, 45.0)[0]
+
+
+def test_pruned_triangular_lattice_is_connected_at_sqrt3_r():
+    L = 500.0
+    pts = sim.raster(L, 250)
+    for r in (40.0, 62.5, 100.0):
+        tri = grid.triangular_grid(L, r, pts, phases=4)
+        assert sim.connectivity(tri, math.sqrt(3) * r * (1 + 1e-9))[0]
+
+
+def test_correlated_shadowing_without_shadowing_is_the_unit_disk():
+    fld = ENV.Field(200.0, [])
+    radio = ENV.Radio(40.0, 3.0, 0.0, 0.0)
+    rng = np.random.default_rng(3)
+    for _ in range(20):
+        s = rng.uniform(0, 200, (60, 2))
+        con, _ = ENV.connectivity_shadow_corr(fld, radio, s, rng, 0.9)
+        assert con == sim.connectivity(s, 40.0)[0]

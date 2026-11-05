@@ -248,6 +248,52 @@ def n_guaranteed_mix(c, delta, radii, weights, L, f=0.0):
     return _smallest_n(lambda n: p_meet_mix(n, c, radii, weights, L, f) >= 1 - delta)
 
 
+# ----------------------------------------------------------------------------- fixed class counts
+def mean_cov_fixed(counts, radii, L):
+    """Expected coverage when exactly counts[m] nodes have radius radii[m] (fixed class counts).
+
+    The nodes are still independent and uniform, but the radius of each class is fixed, so
+    P(x uncovered) = prod_m (1 - a_m(x))^(N_m) instead of (1 - sum_m w_m a_m(x))^N.
+    """
+    log_unc = sum(nm * np.log1p(-_disk_area_inside(float(L), float(rm))) for nm, rm in zip(counts, radii))
+    return float(np.mean(1.0 - np.exp(log_unc)))
+
+
+def var_cov_exact_fixed(counts, radii, L, coarse=None, fine=200, block=600):
+    """Edge-aware variance for fixed class counts:
+    Cov(I_x, I_y) = prod_m (1 - p_m(x) - p_m(y) + p_m(x, y))^(N_m) - prod_m [(1 - p_m(x))(1 - p_m(y))]^(N_m)."""
+    if coarse is None:
+        coarse = int(min(80, max(50, math.ceil(4 * L / min(radii)))))
+    mats = [_pair_matrix(float(L), float(rm), coarse, fine) for rm in radii]
+    wcell = (L / fine) ** 2 / (L * L)
+    ps = [np.asarray(S.sum(axis=1)).ravel() for S, _ in mats]
+    logq = sum(nm * np.log1p(-p) for nm, p in zip(counts, ps))          # log P(x uncovered)
+    TTs = [T.T.tocsc() for _, T in mats]
+    m = len(logq)
+    total = 0.0
+    for i0 in range(0, m, block):
+        lj = np.zeros((min(block, m - i0), m))
+        for (_, T), TT, p, nm in zip(mats, TTs, ps, counts):
+            pij = (T[i0:i0 + block] @ TT).toarray() * wcell
+            lj += nm * np.log(np.maximum(1 - p[i0:i0 + block, None] - p[None, :] + pij, 1e-300))
+        total += float(np.sum(np.exp(lj) - np.exp(logq[i0:i0 + block, None] + logq[None, :])))
+    return max(total / (m * m), 1e-12)
+
+
+def p_meet_fixed(counts, c, radii, L):
+    mu = mean_cov_fixed(counts, radii, L)
+    var = min(var_cov_exact_fixed(counts, radii, L), mu * (1 - mu) * 0.999)
+    t = mu * (1 - mu) / var - 1
+    return float(stats.beta.sf(c, mu * t, (1 - mu) * t))
+
+
+def n_guaranteed_fixed(c, delta, radii, shares, L):
+    """Smallest N (rounded so that every class count N * share is an integer) that meets the Beta rule."""
+    unit = int(round(1 / min(shares)))
+    k = _smallest_n(lambda k: p_meet_fixed([int(round(k * unit * s)) for s in shares], c, radii, L) >= 1 - delta)
+    return k * unit
+
+
 # ----------------------------------------------------------------------------- sleep scheduling
 def min_awake_share(n, c, delta, r, rc, L, step=0.01):
     """Smallest awake probability q such that a drop of n nodes, of which each is awake

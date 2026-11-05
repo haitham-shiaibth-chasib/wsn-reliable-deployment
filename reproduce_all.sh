@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Reproduce every table and figure of the manuscript.
 #
-#   ./reproduce_all.sh                 full run (about 5 h on a 2-core machine)
+#   ./reproduce_all.sh                 full run (about 8 h on a 2-core machine; E23 times the steps, so run it alone)
 #   ./reproduce_all.sh --quick         10 % of the runs, about 20 min (smoke test only)
 #   WORKERS=4 ./reproduce_all.sh       more processes for the optimiser comparison (E10)
 #   TEMPLATE=path/IJIES_Format.docx ./reproduce_all.sh   also rebuild the Word manuscript
@@ -16,6 +16,9 @@ python -m pytest -q tests
 
 echo "== 2/5 experiments (results/ and results/raw/)"
 python experiments/run_experiments.py --exp all --workers "$WORKERS" $QUICK
+
+echo "== seed separation of certification samples"
+python tools/check_seed_separation.py
 
 echo "== 3/5 statistical tests (results/statistical_tests.csv)"
 python experiments/statistics.py

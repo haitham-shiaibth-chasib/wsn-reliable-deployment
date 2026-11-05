@@ -81,3 +81,82 @@ def triangular_grid(L: float, r: float, points: np.ndarray, phases: int = 6) -> 
             if best is None or len(s) < len(best):
                 best = s
     return best
+
+
+def _arcs_cover_circle(arcs, tol=1e-13):
+    """True if the closed arcs (a, b), b - a <= 2 pi, cover the whole circle."""
+    two_pi = 2 * math.pi
+    segs = []
+    for a, b in arcs:
+        if b - a >= two_pi - tol:
+            return True
+        a0 = a % two_pi
+        b0 = a0 + (b - a)
+        if b0 <= two_pi:
+            segs.append((a0, b0))
+        else:
+            segs += [(a0, two_pi), (0.0, b0 - two_pi)]
+    segs.sort()
+    reach = 0.0
+    for a, b in segs:
+        if a > reach + tol:
+            return False
+        reach = max(reach, b)
+    return reach >= two_pi - tol
+
+
+def covers_square_exactly(sensors, L, r, eps=1e-9):
+    """Exact test that closed disks of radius r(1 + eps) centred at `sensors` cover [0, L]^2.
+
+    The field is covered if (i) every point of each field edge lies in some disk and (ii) every
+    point of each sensing circle that lies inside the field lies in a disk of another sensor
+    (perimeter coverage, Huang and Tseng 2005). Both conditions are checked with interval unions,
+    so no raster is involved. The relative tolerance eps (1e-9) absorbs rounding at the points where
+    a lattice cover has zero margin; the result is a statement about radius r(1 + eps).
+    Returns (covered, reason) where reason names the first failing edge or sensor.
+    """
+    s = np.asarray(sensors, dtype=float)
+    R = r * (1 + eps)
+    for axis, const in ((1, 0.0), (1, L), (0, 0.0), (0, L)):          # edges y = 0, y = L, x = 0, x = L
+        other = 1 - axis
+        dist = np.abs(s[:, axis] - const)
+        m = dist <= R
+        half = np.sqrt(np.maximum(R * R - dist[m] ** 2, 0.0))
+        lo, hi = s[m, other] - half, s[m, other] + half
+        reach = 0.0
+        for a, b in sorted(zip(lo, hi)):
+            if a > reach:
+                break
+            reach = max(reach, b)
+        if reach < L:
+            return False, f"edge {'xy'[other]} at {'xy'[axis]} = {const:g} uncovered beyond {reach:.6g}"
+    tree = cKDTree(s)
+    for i, p in enumerate(s):
+        arcs = []
+        for j in tree.query_ball_point(p, r + R):
+            if j == i:
+                continue
+            w = p - s[j]
+            d = math.hypot(w[0], w[1])
+            if d == 0.0:
+                continue
+            c = (R * R - d * d - r * r) / (2 * r * d)    # circle i point p + r u lies in disk j iff cos(angle) <= c
+            if c >= 1:
+                arcs = [(0.0, 2 * math.pi)]
+                break
+            if c <= -1:
+                continue
+            phi, h = math.atan2(w[1], w[0]), math.pi - math.acos(c)
+            arcs.append((phi + math.pi - h, phi + math.pi + h))
+        for base, coord, lim in ((0.0, p[0], L), (math.pi / 2, p[1], L)):   # arcs outside the field count as covered
+            a = (lim - coord) / r                      # beyond the far edge: cos(t - base) > a
+            if a < 1:
+                h = math.pi if a <= -1 else math.acos(a)
+                arcs.append((base - h, base + h))
+            a = coord / r                              # beyond the near edge: cos(t - base) < -a
+            if a < 1:
+                h = math.pi if a <= -1 else math.acos(a)
+                arcs.append((base + math.pi - h, base + math.pi + h))
+        if not _arcs_cover_circle(arcs):
+            return False, f"perimeter of sensor {i} not covered"
+    return True, ""

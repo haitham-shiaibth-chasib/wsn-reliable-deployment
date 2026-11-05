@@ -277,3 +277,153 @@ E15_heterogeneous:
   raster: 200
   seed_base: 15000
   seed_rule: "seed_base + 1000 * int(100 * target) + N"
+
+# ============================================================================= revision (version 1.3)
+E24_baseline_sensitivity:
+  description: "Settings of the three re-implemented recent baselines varied around their defaults (N = 33, paired E10 seeds)"
+  nodes: [33]
+  seeds: 10                    # the first 10 E10 seeds: seed_base + 37 N + k, k = 0..9
+  variants:
+    VASF-PSO:
+      "search factor floor 0.1": {sf_floor: 0.1}
+      "search factor floor 0.4": {sf_floor: 0.4}
+      "60 particles x 150 iterations": {particles: 60, iters: 150}
+      "double budget (30 x 600)": {particles: 30, iters: 600}
+    ICGWO:
+      "linear decay of a": {a_exp: 1.0}
+      "cubic decay of a": {a_exp: 3.0}
+      "double budget (30 x 600)": {wolves: 30, iters: 600}
+    DAR-SSA:
+      "ST = 0.9": {st: 0.9}
+      "repulsion step 0.3r": {eta: 0.3}
+      "60 sparrows x 150 iterations": {pop: 60, iters: 150}
+      "double budget (30 x 600)": {pop: 30, iters: 600}
+
+E21_ilp_resolution:
+  description: "Set-cover integer program at coarser candidate/demand grids (10 m is E13), and a continuous bound"
+  field: 500.0
+  sensing_radius: 62.5
+  spacings: [20.0, 12.5]
+  time_limit_s: 1200
+  evaluation_raster: 1000
+
+E17_certification:
+  description: "Independent Monte Carlo certification of the analytical designs (one-sided Clopper-Pearson bound)"
+  runs: 2000                   # independent certification drops per attempt
+  alpha: 0.05                  # overall error probability of the certificate
+  max_attempts: 10             # each attempt uses alpha / max_attempts and a fresh sample (Bonferroni)
+  step_share: 0.02             # a failed design is replaced by N + max(1, ceil(0.02 N0)) nodes
+  coverage:                    # the sixteen settings of E6b, coverage only, delta = 0.05
+    seed_base: 50000
+    seed_rule: "seed_base + 1000 * setting + 100 * target_index + attempt"
+  joint:                       # the four joint designs of E7b
+    seed_base: 52000
+    seed_rule: "seed_base + 1000 * int(Rc) + 100 * target_index + attempt"
+  environment:                 # the simulated-connectivity rule of E11 in its four environments
+    seed_base: 54000
+    seed_rule: "seed_base + 1000 * scenario_index + attempt"
+
+E18_certified_lattice:
+  description: "Error-tolerant lattices: design sample (E16 search) followed by independent certification"
+  field: 500.0
+  sensing_radius: 62.5
+  target: 0.99
+  delta: 0.05
+  lattices: [triangular, square]
+  sigma_over_r: [0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0]
+  design_raster: 250
+  simulation_raster: 200
+  kappa_step: 0.02
+  kappa_min: 0.10
+  search:                      # only for sigma/r = 0.75 and 1.0; smaller errors reuse the E16 designs
+    runs: 500
+    seed_base: 30000
+    seed_rule: "as E16"
+  certification:
+    runs: 2000
+    seed_base: 56000
+    seed_rule: "seed_base + 1000 * round(100 * sigma_over_r) + 100 * [lattice == square] + attempt"
+  connectivity_ranges_over_r: [1.7320508075688772, 2.0]
+
+E19_stress:
+  description: "Stress study of the Beta rule: small node counts, very high targets, rectangles, irregular fields, correlated shadowing"
+  delta: 0.05
+  runs: 1000                   # drops per calibration point
+  calibration_factors: [0.9, 0.95, 1.0, 1.05, 1.1]
+  node_cell: 1.0               # raster spacing (m) of node positions and of the coverage raster
+  seed_base: 58000
+  seed_rule: "seed_base + 1000 * setting + N"
+  settings:                    # [name, Lx, Ly, cut-outs, r, target]
+    - ["small N", 200.0, 200.0, [], 40.0, 0.8]
+    - ["small N", 200.0, 200.0, [], 40.0, 0.9]
+    - ["small N", 200.0, 200.0, [], 40.0, 0.95]
+    - ["small N", 200.0, 200.0, [], 40.0, 0.99]
+    - ["very high target", 200.0, 200.0, [], 20.0, 0.995]
+    - ["very high target", 200.0, 200.0, [], 20.0, 0.999]
+    - ["rectangle 2:1", 200.0, 100.0, [], 20.0, 0.9]
+    - ["rectangle 2:1", 200.0, 100.0, [], 20.0, 0.99]
+    - ["rectangle 4:1", 400.0, 100.0, [], 20.0, 0.9]
+    - ["rectangle 4:1", 400.0, 100.0, [], 20.0, 0.99]
+    - ["L-shaped field", 200.0, 200.0, [[100, 100, 200, 200]], 20.0, 0.9]
+    - ["L-shaped field", 200.0, 200.0, [[100, 100, 200, 200]], 20.0, 0.99]
+    - ["field with a hole", 200.0, 200.0, [[70, 70, 130, 130]], 20.0, 0.9]
+    - ["field with a hole", 200.0, 200.0, [[70, 70, 130, 130]], 20.0, 0.99]
+  certification_seed_base: 60000
+  certification_seed_rule: "certification_seed_base + 100 * setting + attempt"
+  correlated_shadowing:        # open 200 m field, r = 20 m, Rc = 40 m (median), 8 dB, joint target 0.9
+    field: 200.0
+    sensing_radius: 20.0
+    median_range: 40.0
+    path_loss_exponent: 3.0
+    shadowing_db: 8.0
+    target: 0.9
+    rho: [0.0, 0.5, 0.9]       # node-shared share of the shadowing variance; link correlation = rho / 2
+    raster: 200
+    rule_runs: 2000            # (a) the independent-shadowing rule on its own drops (descriptive)
+    design_runs: 1000          # (b) design sample: N = ceil(N_rule (1 + 0.05 j)) until the share reaches design_share
+    design_step_share: 0.05
+    design_max_steps: 20
+    design_share: 0.965
+    seed_base: 62000
+    seed_rule: "certification: seed_base + 100 * rho_index + attempt - 1; design step j: + 50 + j; rule check: + 90"
+
+E20_schedule_conditional:
+  description: "Deployment-conditional reliability of the randomized sleep schedule over many rounds"
+  deployments: 200
+  rounds: 300
+  raster: 100
+  requirement: 0.95            # operational requirement on the per-round success rate of a deployment
+  seed_base: 64000
+  seed_rule: "seed_base + 1000 * multiplier_index + deployment (one generator per deployment)"
+
+E22_fixed_counts:
+  description: "Heterogeneous radii with fixed class counts (half of the nodes of each radius)"
+  field: 200.0
+  radii: [15.0, 25.0]
+  shares: [0.5, 0.5]
+  targets: [0.8, 0.9, 0.95, 0.99]
+  delta: 0.05
+  runs: 1000
+  raster: 200
+  seed_base: 66000
+  seed_rule: "seed_base + 1000 * int(100 * target) + N"
+
+E23_runtime:
+  description: "Run time and peak memory of the design steps, the baselines and one online evaluation (run alone)"
+  field: 500.0
+  sensing_radius: 62.5
+  repetitions: 3                 # median of 3 calls; one extra call under tracemalloc gives the memory peak
+  seed_base: 68000
+  sizing: {field: 200.0, radius: 20.0, target: 0.95, delta: 0.05, raster: 200}
+  joint: {field: 200.0, radius: 20.0, Rc: 40.0, target: 0.95, delta: 0.05}
+  certification_runs: 2000
+  lattice_design_raster: 250
+  lattice_sigma_over_r: 0.2
+  baselines: [Random, VFA, PSO, GA, GWO, ICGWO, VASF-PSO, DAR-SSA]
+  baseline_seeds: 3              # E10 seeds k = 0, 1, 2 at N = 33
+  evaluation_calls: 200
+
+E25_checks:
+  description: "Connectivity and exact coverage of the pruned lattices, diameter-grid spacing condition, variance decomposition"
+  diameter_grid_ratios: [0.7, 1.1, 1.4, 1.5, 2.0, 2.1, 2.2, 2.5, 4.0]   # L/(2r); full cover iff L/(n-1) <= sqrt(2) r
+  exact_cover_tolerance: 1.0e-9                               # relative radius tolerance of the exact test

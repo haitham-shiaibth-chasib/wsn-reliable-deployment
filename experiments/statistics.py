@@ -325,6 +325,87 @@ def family_reliable_lattice():
     close_family(fam)
 
 
+# ----------------------------------------------------------------------------- M-Q. revision experiments
+def family_certification():
+    """Every certification attempt as an exact one-sided binomial test (decision at alpha / K = 0.005)."""
+    fam = "M. Certification attempts (E17, E18, E19): H0 p <= 0.95, decided at level 0.005 per attempt"
+    for fname, label in (("E17_certification.csv", lambda q: f"{q['part']}, {q['setting'] or q['scenario']}, "
+                                                             f"Ct={q['target']:g}, N={int(q['N'])}"),
+                         ("E18_certified_lattice.csv", lambda q: f"{q['kind']}, sigma={q['sigma_over_r']:g}r, "
+                                                                 f"kappa={q['kappa']:g}, N={int(q['nodes'])}"),
+                         ("E19_stress.csv", None)):
+        path = os.path.join(RES, fname)
+        if not os.path.exists(path) or label is None:
+            continue
+        for q in load(path):
+            k, n = int(q["met"]), int(q["runs"])
+            res = stats.binomtest(k, n, 0.95, alternative="greater")
+            add(fam, "one-sided exact binomial test, H1: p > 0.95", label(q), n, k / n, float(res.pvalue),
+                note=f"certified = {q['certified']}; Clopper-Pearson lower bound {q['lower_bound']:.4f}")
+    # no Holm step: the procedure controls its error by the Bonferroni level of each attempt
+
+
+def family_sensitivity():
+    path = os.path.join(RAW, "E24_runs.csv")
+    if not os.path.exists(path):
+        return
+    fam = "N. Baseline parameter sensitivity against the default setting, same seeds (E24 vs E10)"
+    raw = load(path)
+    e10 = load(os.path.join(RAW, "E10_runs.csv"))
+    for m in dict.fromkeys(q["method"] for q in raw):
+        for v in dict.fromkeys(q["variant"] for q in raw if q["method"] == m):
+            x = {int(q["seed"]): q["coverage"] for q in raw if q["method"] == m and q["variant"] == v}
+            y = {int(q["seed"]): q["coverage"] for q in e10 if q["method"] == m and q["N"] == 33 and int(q["seed"]) in x}
+            d = np.array([x[k] - y[k] for k in sorted(x)])
+            if np.all(d == 0):
+                continue
+            r_ = stats.wilcoxon(d)
+            add(fam, "Wilcoxon signed-rank, variant minus default", f"{m}, {v}", len(d), float(r_.statistic),
+                float(r_.pvalue), rank_biserial(d), "positive effect = variant covers more")
+    close_family(fam)
+
+
+def family_fixed_counts():
+    path = os.path.join(RES, "E22_fixed_counts.csv")
+    if not os.path.exists(path):
+        return
+    fam = "O. Heterogeneous radii with fixed class counts (E22)"
+    for q in load(path):
+        res = stats.binomtest(int(q["met"]), int(q["runs"]), 0.95)
+        add(fam, "exact binomial test, H0: P(C >= Ct) = 0.95", f"{q['rule']}, Ct={q['target']:g}, N={int(q['N'])}",
+            int(q["runs"]), q["p_meet"], float(res.pvalue))
+    close_family(fam)
+
+
+def family_stress():
+    path = os.path.join(RES, "E19_calibration.csv")
+    if not os.path.exists(path):
+        return
+    fam = "P. Stress study: share at the rule value against 0.95 (E19)"
+    for q in load(path):
+        if q["factor"] != 1.0:
+            continue
+        k, n = int(round(q["observed"] * q["runs"])), int(q["runs"])
+        res = stats.binomtest(k, n, 0.95)
+        add(fam, "exact binomial test, H0: P(C >= Ct) = 0.95", f"{q['name']}, Ct={q['target']:g}, N={int(q['N'])}",
+            n, k / n, float(res.pvalue), note=f"predicted {q['predicted']:.4f}")
+    close_family(fam)
+    path = os.path.join(RES, "E19_correlated_shadowing.csv")
+    if not os.path.exists(path):
+        return
+    fam = "Q. Correlated link shadowing: independent-shadowing rule against 0.95 (E19)"
+    seen = set()
+    for q in load(path):
+        if q["rho"] in seen:
+            continue
+        seen.add(q["rho"])
+        k, n = int(q["rule_met"]), int(q["rule_runs"])
+        res = stats.binomtest(k, n, 0.95, alternative="less")
+        add(fam, "one-sided exact binomial test, H1: P(both targets) < 0.95",
+            f"link correlation {q['link_correlation']:g}, N={int(q['N_rule'])}", n, k / n, float(res.pvalue))
+    close_family(fam)
+
+
 def main():
     family_mean_models()
     family_variance()
@@ -338,6 +419,10 @@ def main():
     family_scheduling()
     family_heterogeneous()
     family_reliable_lattice()
+    family_certification()
+    family_sensitivity()
+    family_fixed_counts()
+    family_stress()
     path = os.path.join(RES, "statistical_tests.csv")
     with open(path, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(TESTS[0].keys()))
