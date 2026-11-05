@@ -1,5 +1,5 @@
 # Experiment configuration for the manuscript
-#   "Reliability-Guaranteed Sensor Deployment for Wireless Sensor Networks Using
+#   "Statistically Certified Sensor Deployment for Wireless Sensor Networks Using
 #    Edge-Corrected Coverage Statistics and Drop-Error-Tolerant Lattices"
 #
 # Every number used by experiments/run_experiments.py comes from this file.

@@ -318,14 +318,14 @@ _stress_cert = sum(1 for q in e19 if q["N_certified"] != "")
 
 ABSTRACT = (
     "Random deployments are usually sized for the expected coverage, so about half of them miss the target. "
-    "Here a design rule combines an edge-corrected mean and "
+    "A design rule combines an edge-corrected mean and "
     "variance of area coverage, a Beta approximation of its distribution and an edge-corrected isolated-node "
     "condition; planned drops use a lattice shrunk to absorb drop errors. Each design is then accepted only when a "
     "one-sided Clopper-Pearson bound on its success probability, computed from independent simulated drops with a "
     "Bonferroni correction over attempts, reaches the required level. In sixteen settings the rule met a 95 percent "
     f"target in {beta_lo*100:.0f} to {beta_hi*100:.0f} percent of drops, against {mean_lo*100:.0f} to "
-    f"{mean_hi*100:.0f} percent for the mean rule, and certification added at most {max(_cov_extra)*100:.1f} percent "
-    "more nodes. With drop errors of 30 percent of the sensing radius, a certified lattice needed "
+    f"{mean_hi*100:.0f} percent for the mean rule, and certifying the designs added at most {max(_cov_extra)*100:.1f} "
+    "percent more nodes. With drop errors of 30 percent of the sensing radius, a certified lattice needed "
     f"{_lat03_nodes} nodes and a certified random drop {int(_rand_cert['N_certified'])}. A stress study maps the "
     "operating region of the rule."
 )
@@ -472,7 +472,8 @@ d.p("**Inferential objective.** For a design {{D}} (a node count for a random dr
 # ============================================================================= 4. Framework
 d.h1("4. Proposed framework")
 d.p("Fig. 1 shows the framework: two rules size a random drop, planned drops use the error-tolerant lattice "
-    "of Section 4.5, and every design passes the certification of Section 4.6 before it is reported.")
+    "of Section 4.5, and the main designs pass the certification of Section 4.6 (Tables 8, 10 and 14); the other "
+    "studies of Section 6 test the rules themselves.")
 d.figure(os.path.join(FIG, "paper_fig1_framework.png"), "Proposed deployment design framework")
 
 d.h2("4.1 Mean coverage with boundary effects")
@@ -695,7 +696,7 @@ d.table("Simulation settings",
          ["Run time", "200, 500", "all steps and baselines, one core", "3 calls"]],
         [1230, 580, 2010, 780])
 d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G × G}} cell centers) and first seed of every "
-        "result. Each ID runs with run_experiments.py --exp ID; per-drop outcomes, layouts and all seeds are in "
+        "result. Each ID runs with run_experiments.py --exp ID and the settings in config/experiments.yaml; per-drop outcomes, layouts and all seeds are in "
         "results/raw, and all test families in results/statistical_tests.csv. Design, validation and certification "
         "samples use separate seeds",
         [["Result", "ID", "Raster or quadrature", "Seed base"],
@@ -712,7 +713,7 @@ d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G ×
          ["Table 13", "E23", "as E10 and E6b", "68,000"],
          ["Section 6.8", "E9", "200²", "9,000"],
          ["Fig. 8", "E11", "200²; model 80², 200²", "11,000"],
-         ["Fig. 9, Table 14", "E19", "1 m cells; 200²", "58,000"],
+         ["Fig. 9, Table 14, Section 6.10", "E19", "1 m cells; 200²", "58,000"],
          ["Table 15", "E12", "200²", "12,000"],
          ["Section 6.11", "E15, E22", "200²", "15,000"],
          ["Table 16", "E14, E20", "200²; 100²", "14,000"]],
@@ -731,7 +732,8 @@ d.p("**Baselines.** We compared the proposed lattice with random placement, VFA 
     "for the smallest design radius that needs at most {{N}} nodes, found by bisection over [0.3{{r}}, 3{{r}}]; above "
     "the full-cover count the spare nodes become overlap. All methods share the binary disk model, the field and the "
     "final 250 × 250 evaluation raster, so the comparison is made under matched assumptions. Run times "
-    f"were measured on one core of the same machine ({e23hw['cpu'].split(' @')[0]}).")
+    f"were measured on one core of the same machine ({e23hw['cpu'].split(' @')[0]} at 2.3 GHz, a virtual machine that "
+    "does not report the processor model).")
 d.table("Baseline settings (equal budget of 9,030 evaluations)",
         [["Method", "Settings"],
          ["PSO [@kennedy]", "{{w}} = 0.729, {{c_1 = c_2}} = 1.494"],
@@ -1357,7 +1359,7 @@ d.h1("8. Conclusion")
 d.p("Sizing a random drop for the expected coverage misses the target about half of the time. An edge-aware "
     "variance for a fixed node count and a Beta approximation turn the target into a design rule that met a 95% "
     f"requirement in {pct(beta_lo, 0)} to {pct(beta_hi, 0)} of drops over sixteen settings, at {pct(extra_lo, 0)} to "
-    f"{pct(extra_hi, 0)} more nodes than the mean rule. Because the rule is an approximation, every design is "
+    f"{pct(extra_hi, 0)} more nodes than the mean rule. Because the rule is an approximation, the main designs are "
     "certified on independent drops with a one-sided Clopper-Pearson bound and a Bonferroni correction over the "
     f"attempts, which added {pct(min(_cov_extra), 0)} to {pct(max(_cov_extra), 1)} more nodes to the coverage designs "
     "and gives each a known error probability. The same expressions extend to connectivity, failures, "
