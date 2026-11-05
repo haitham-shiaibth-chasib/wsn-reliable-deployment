@@ -265,7 +265,7 @@ class Doc:
             rows = ""
             for latex, num in eqs:
                 om = next(it)
-                left = (f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="40" w:after="40"/><w:ind w:left="113"/><w:jc w:val="left"/></w:pPr>'
+                left = (f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="40" w:after="40"/><w:ind w:left="283"/><w:jc w:val="left"/></w:pPr>'
                         f'<m:oMathPara><m:oMathParaPr><m:jc m:val="left"/></m:oMathParaPr>{om}</m:oMathPara></w:p>')
                 right = (f'<w:p><w:pPr><w:spacing w:before="40" w:after="40"/><w:jc w:val="right"/></w:pPr>'
                          f'{run(f"({num})", 22)}</w:p>')

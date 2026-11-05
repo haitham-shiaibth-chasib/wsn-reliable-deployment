@@ -617,7 +617,7 @@ d.table("Pseudocode of the design and certification procedures",
          ["Input {{L, r, σ, C_t}} (and {{δ}})\n1: {{κ}} ← 1\n2: build the triangular (or square) lattice for radius {{κr}}: offsets, candidates,\n    raster test, pruning, selection, exact coverage and connectivity checks\n3: mean design: if Eq. (18) ≥ {{C_t}} return lattice;\n    reliability design: if the Wilson lower bound of P({{C ≥ C_t}}) over 500\n    search drops ≥ {{1 − δ}} pass the lattice to Algorithm 3\n4: {{κ}} ← {{κ}} − 0.02 and go to 2"],
          ["Algorithm 3: certification"],
          ["Input design {{D_1}}, {{δ}}, {{α}} = 0.05, {{K}} = 10, {{n_c}} = 2,000\n1: for {{k}} = 1, ..., {{K}}: draw {{n_c}} new drops of {{D_k}}, count successes {{K_D}}\n2:    {{p_L}} ← Eq. (19) with {{α' = α/K}}\n3:    if {{p_L ≥ 1 − δ}} return {{D_k}} (certified)\n4:    next design: {{D_k}} with {{⌈0.02N_0⌉}} more nodes, or {{κ}} − 0.02\n5: return not certified"]],
-        [4600], header_rows=0, align=["left"], split=True, keep={0, 2, 4})
+        [4600], header_rows=0, align=["left"])
 
 d.h2("4.7 Obstacles and shadowing")
 d.p("Practical sites contain buildings and other obstacles [@liuz, @ahmed]. Let {{F_f}} be the part of the field outside the obstacles {{O}}, let nodes "
@@ -693,7 +693,7 @@ d.table("Simulation settings",
          ["Obstacles", "200", "{{r}} = 20 m, {{R_c}} = 40 m, {{C_t}} = 0.9, {{η}} = 3, {{σ_s}} = 0/8 dB, {{L_o}} = 20 dB", "300 / 500"],
          ["Stress", "100-400", "{{r}} = 20, 40 m, {{C_t}} up to 0.999, five field shapes, link correlation 0-0.45", "1,000 / 2,000"],
          ["Run time", "200, 500", "all steps and baselines, one core", "3 calls"]],
-        [1230, 580, 2010, 780], split=True)
+        [1230, 580, 2010, 780])
 d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G × G}} cell centers) and first seed of every "
         "result. Each ID runs with run_experiments.py --exp ID; per-drop outcomes, layouts and all seeds are in "
         "results/raw, and all test families in results/statistical_tests.csv. Design, validation and certification "
@@ -716,7 +716,7 @@ d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G ×
          ["Table 15", "E12", "200²", "12,000"],
          ["Section 6.11", "E15, E22", "200²", "15,000"],
          ["Table 16", "E14, E20", "200²; 100²", "14,000"]],
-        [1450, 1000, 1400, 750], split=True)
+        [1450, 1000, 1400, 750])
 d.p("**Baselines.** We compared the proposed lattice with random placement, VFA [@zou], PSO [@kennedy], GWO "
     "[@mirjalili], a real-coded genetic algorithm (GA) [@holland, @eshelman], and three methods published after 2024: VASF-PSO "
     "[@haris], ICGWO [@shaikh] and DAR-SSA [@kheam]. "
@@ -794,7 +794,7 @@ for L_, r_ in ((200.0, 15.0), (200.0, 20.0), (200.0, 25.0), (400.0, 20.0)):
                      f"{100 * m_['p_meet']:.1f}",
                      f"{100 * b_['p_meet']:.1f} [{100 * b_['p_lo']:.1f}–{100 * b_['p_hi']:.1f}]"])
 d.table("Node counts and share of 300 drops that met the target in the sixteen settings ({{δ}} = 0.05; Wilson 95% intervals in brackets)",
-        rows, [820, 480, 900, 700, 1700], split=True)
+        rows, [820, 480, 900, 700, 1700])
 
 # ---- 6.3 certification
 _cov_first = [q for q in e17_first if q["part"] == "coverage"]
@@ -835,7 +835,7 @@ for sc_ in env_cfg_names:
     rows.append([_envlab.get(sc_, sc_), "–", _cell(_env_rows[sc_]), "–", "–"])
 d.table(f"Certified node counts, rule → certified ({CP_N:,} new drops per attempt, one-sided Clopper-Pearson bound, "
         "α = 0.05 over at most 10 attempts; n.c. = not certified); joint designs by {{R_c}} (m), environment designs at "
-        "{{C_t}} = 0.9", rows, [900, 925, 925, 925, 925], split=True)
+        "{{C_t}} = 0.9", rows, [900, 925, 925, 925, 925])
 
 # ---- 6.4 connectivity
 d.h2("6.4 Connectivity and the joint rule")
@@ -980,7 +980,7 @@ rows.append(["Random", f"{n_rand_mean}", f"{n_rand_guar} → {_rc_n}", "–", "�
 d.table("Error-tolerant lattices for 99% coverage (500 m field, {{r}} = 62.5 m): node counts of the mean design and of the certified "
         f"reliability design ({{{{δ}}}} = 0.05; {CP_N:,} drops per attempt); share of drops with {{{{C}}}} ≥ 0.99 and its "
         "one-sided lower bound, and share of connected drops, for the certified triangular lattice", rows,
-        [850, 950, 950, 950, 900], split=True)
+        [850, 950, 950, 950, 900])
 
 # ---- 6.7 baselines
 d.h2("6.7 Comparison with optimization methods")
@@ -1059,7 +1059,7 @@ for m in ("VASF-PSO", "ICGWO", "DAR-SSA"):
                      f"{100 * q['connected_share']:.0f}"])
 d.table(f"Parameter sensitivity of the re-implemented recent baselines ({{{{N}}}} = 33, {len(_sens_seeds)} seeds, mean ± std; "
         "population × iterations; connectivity at {{R_c}} = √3{{r}}); the lattice covers 100% and is connected",
-        rows, [1800, 1250, 800, 750], split=True)
+        rows, [1800, 1250, 800, 750])
 # run time (E23)
 _rt = {q["task"]: q for q in e23}
 _rtb = {}
@@ -1123,7 +1123,7 @@ for q in e23:
         _rows_rt.append([lab, _ts(q['median_s']), f"{q['peak_traced_MiB']:.1f}"])
 d.table(f"Run time and peak memory on one core ({e23hw['cpu'].split(' @')[0]}, Python {e23hw['python']}, "
         f"NumPy {e23hw['numpy']}; median of 3 calls, 500 m field, {{{{r}}}} = 62.5 m, rules in the 200 m field)",
-        _rows_rt, [2600, 1000, 1000], split=True)
+        _rows_rt, [2600, 1000, 1000])
 
 # ---- 6.8 extensions
 d.h2("6.8 Accuracy of the extensions")
@@ -1231,7 +1231,7 @@ for q in e19:
 d.table("Stress study of the Beta rule ({{δ}} = 0.05): predicted and observed share at the rule value (1,000 drops) and the "
         f"certified count ({CP_N:,} drops per attempt; n.c. = not certified within 10 attempts); rect. = rectangle with the "
         "given aspect ratio, hole = square field with a central hole", rows,
-        [770, 620, 500, 600, 1510, 600], split=True)
+        [770, 620, 500, 600, 1510, 600])
 _cs = sorted(e19s_final.values(), key=lambda q: q["rho"])
 
 
