@@ -171,7 +171,7 @@ so every optimiser returns the best layout found during its run.
 * E2-E16 are unchanged; their files and checksums are those of v1.2.0.
 * E19 can be split into parallel parts (`E19_PART`, `E19_SETTINGS`, `E19_CORR`) and merged with `--exp E19merge`.
 
-## Changes in version 1.2.0
+## Changes in version 1.2.0 (table and section numbers of the submitted version)
 
 * The naive square grid whose spacing equals the sensing diameter is `grid.diameter_grid`; its columns in
   `E5_grids.csv` are `diameter_*` and its layouts are `raw/layouts/E5_diameter_*`.

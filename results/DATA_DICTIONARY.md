@@ -1,5 +1,7 @@
 # Data dictionary
 
+Manuscript references (tables, figures, equations, sections) follow the revised article (v1.3.0).
+
 All files are comma-separated, UTF-8, with a header row. Lengths are in metres; coverage values,
 probabilities and shares are fractions in [0, 1]. "Coverage" is always the share of raster cell
 centres that lie within the sensing radius of at least one sensor (the raster resolution of each
@@ -10,20 +12,20 @@ experiment is given in `config/experiments.yaml`). Every number is produced by
 
 | File | Manuscript | One row per | Columns |
 |---|---|---|---|
-| `E2_physical.csv` | Fig. 2, Table 5 | (r, N) | `r`, `N`, `density` = Nπr²/A, `mc_mean`, `mc_std` (ddof = 1), `ci95` (half-width of the Student t interval), `linear_no_overlap` (Eq. 1), `poisson_exp` (Eq. 2), `exact_edge` (Eq. 4) |
-| `summary_errors.csv` | Table 5 | (experiment, model) | `n_configs`, `MAE`, `RMSE`, `MaxAbs`, `Bias` of the model against `mc_mean` |
-| `E5_grids.csv` | Table 7 | r | node count and coverage (0.5 m raster) of the diameter-spaced grid (`diameter_*`, spacing 2r), the square and the triangular lattice; `*_spacing` in metres |
+| `E2_physical.csv` | Fig. 2, Table 6 | (r, N) | `r`, `N`, `density` = Nπr²/A, `mc_mean`, `mc_std` (ddof = 1), `ci95` (half-width of the Student t interval), `linear_no_overlap` (Eq. 1), `poisson_exp` (Eq. 2), `exact_edge` (Eq. 4) |
+| `summary_errors.csv` | Table 6 | (experiment, model) | `n_configs`, `MAE`, `RMSE`, `MaxAbs`, `Bias` of the model against `mc_mean` |
+| `E5_grids.csv` | Table 9 | r | node count and coverage (0.5 m raster) of the diameter-spaced grid (`diameter_*`, spacing 2r), the square and the triangular lattice; `*_spacing` in metres |
 | `E6a_variance.csv` | Fig. 3 | N | `mc_mean`, `mc_std` of 300 drops; `model_mean` (Eq. 4); `model_std_exact` (Eqs. 5-6); `model_std_stationary` |
-| `E6b_sizing.csv` | Fig. 4, Table 6 | (L, r, target, rule) | `N` given by the rule; `mc_mean`, `mc_std`; `p_meet` = share of 300 drops with coverage ≥ target and its Wilson interval `p_lo`, `p_hi`; `model_p_meet` (predicted) |
+| `E6b_sizing.csv` | Fig. 4, Table 7 | (L, r, target, rule) | `N` given by the rule; `mc_mean`, `mc_std`; `p_meet` = share of 300 drops with coverage ≥ target and its Wilson interval `p_lo`, `p_hi`; `model_p_meet` (predicted) |
 | `E7a_connectivity.csv` | Fig. 5 | (Rc, N) | `mc_p_conn` (connected share, Wilson `lo`, `hi`), `mc_p_no_isolated`, `model_p_no_isolated` (Eq. 9) |
-| `E7b_joint.csv` | Sec. 6.3 | (Rc, target, rule) | `N`; shares of 500 drops meeting coverage (`p_cov`), connectivity (`p_conn`) and both (`p_both`, Wilson `lo`, `hi`) |
-| `E8_placement_error.csv` | Fig. 6, Table 8 | (σ/r, lattice) | `naive_nodes`, `naive_expected` (Eq. 17 for the exact lattice); `robust_nodes`, `kappa`, `robust_expected` (Eq. 17); `mc_mean`, `mc_std`, `ci95`, `mc_min` of 100 drops; node counts of the random-drop mean and Beta rules |
-| `E9_extensions.csv` | Sec. 6.7 (supplementary figure `paper_fig9_extensions.png`) | (case, parameter, N) | `mc_mean`, `ci95` of 100 runs and `model` (Eqs. 9, 11, 13 or Eq. 4 with failures) |
-| `E10_baselines_summary.csv` | Fig. 7, Table 9 | (method, N) | over 30 seeds: `mean`, `std`, `best`, `worst` coverage; `noisy_mean` (coverage after a 0.2r drop error); `connected_share` (Rc = √3 r); `seconds` (wall clock, machine dependent); `evals` (fitness evaluations); `p_vs_lattice` (uncorrected Wilcoxon p) |
-| `E11_model_check.csv` | Sec. 6.8 | (scenario, N) | 300 drops: `mc_cov_mean`, `mc_cov_std`, `mc_p_no_isolated`, connected share `mc_p_conn` with Wilson `lo`, `hi`; model values `model_cov_mean`, `model_cov_std` (Eqs. 4-6 with Eq. 18), `model_p_no_isolated` (Eq. 9 with Eq. 20) |
-| `E11_rules.csv` | Fig. 8 | (scenario, rule) | `N` of the open-field rule (Eq. 10, Algorithm 1), the environment-aware rule with the analytical connectivity term (Eqs. 18-20 in Eqs. 8-10) and the environment-aware rule with the simulated connectivity term (Sec. 4.6); `free_area` (m²); shares of 500 drops meeting coverage, connectivity and both (Wilson `lo`, `hi`); model predictions `model_p_cov`, `model_p_no_isolated` |
-| `E11_conn_sizing.csv` | Sec. 4.6, 6.8 | (scenario, N) | trace of the simulated connectivity search: `seed`, `runs` (2000), `p_connected` (connected share of the shadowed link graph), `model_p_no_isolated` (Eq. 9 with Eq. 20) |
-| `E16_reliable_lattice.csv` | Sec. 6.5, Fig. 6, Table 8 | (σ/r, lattice) | reliability-sized error-tolerant lattice: `nodes`, `kappa`; `search_share`, `search_lo` (share of 500 search drops with C ≥ 0.99 and its lower Wilson bound); `p_meet`, `lo`, `hi` (share of 1,000 independent validation drops with C ≥ 0.99, Wilson interval); `mc_mean`, `mc_std`; `expected` (Eq. 17) |
+| `E7b_joint.csv` | Sec. 6.4 | (Rc, target, rule) | `N`; shares of 500 drops meeting coverage (`p_cov`), connectivity (`p_conn`) and both (`p_both`, Wilson `lo`, `hi`) |
+| `E8_placement_error.csv` | Fig. 6, Table 10 | (σ/r, lattice) | `naive_nodes`, `naive_expected` (Eq. 18 for the exact lattice); `robust_nodes`, `kappa`, `robust_expected` (Eq. 18); `mc_mean`, `mc_std`, `ci95`, `mc_min` of 100 drops; node counts of the random-drop mean and Beta rules |
+| `E9_extensions.csv` | Sec. 6.8 (supplementary figure `paper_fig9_extensions.png`) | (case, parameter, N) | `mc_mean`, `ci95` of 100 runs and `model` (Eqs. 9, 11, 13 or Eq. 4 with failures) |
+| `E10_baselines_summary.csv` | Fig. 7, Table 11 | (method, N) | over 30 seeds: `mean`, `std`, `best`, `worst` coverage; `noisy_mean` (coverage after a 0.2r drop error); `connected_share` (Rc = √3 r); `seconds` (wall clock on the machines used for v1.2.0, with two processes; Table 13 of the revised article gives times measured on one machine, E23); `evals` (fitness evaluations); `p_vs_lattice` (uncorrected Wilcoxon p) |
+| `E11_model_check.csv` | Sec. 6.9 | (scenario, N) | 300 drops: `mc_cov_mean`, `mc_cov_std`, `mc_p_no_isolated`, connected share `mc_p_conn` with Wilson `lo`, `hi`; model values `model_cov_mean`, `model_cov_std` (Eqs. 4-6 with Eq. 20), `model_p_no_isolated` (Eq. 9 with Eq. 22) |
+| `E11_rules.csv` | Fig. 8 | (scenario, rule) | `N` of the open-field rule (Eq. 10, Algorithm 1), the environment-aware rule with the analytical connectivity term (Eqs. 20-22 in Eqs. 8-10) and the environment-aware rule with the simulated connectivity term (Sec. 4.7); `free_area` (m²); shares of 500 drops meeting coverage, connectivity and both (Wilson `lo`, `hi`); model predictions `model_p_cov`, `model_p_no_isolated` |
+| `E11_conn_sizing.csv` | Sec. 4.7, 6.9 | (scenario, N) | trace of the simulated connectivity search: `seed`, `runs` (2000), `p_connected` (connected share of the shadowed link graph), `model_p_no_isolated` (Eq. 9 with Eq. 22) |
+| `E16_reliable_lattice.csv` | Sec. 6.6, Fig. 6 | (σ/r, lattice) | reliability-sized error-tolerant lattice: `nodes`, `kappa`; `search_share`, `search_lo` (share of 500 search drops with C ≥ 0.99 and its lower Wilson bound); `p_meet`, `lo`, `hi` (share of 1,000 independent validation drops with C ≥ 0.99, Wilson interval); `mc_mean`, `mc_std`; `expected` (Eq. 18) |
 | `statistical_tests.csv` / `.md` | Secs. 5-6 | test | `family`, `test`, `comparison`, `n`, `statistic`, `p_value`, `p_holm` (Holm-Bonferroni within family), `effect_size`, `note` |
 | `S2_connectivity_scan.csv` | supplementary | N | connectivity for Rc = r and 2r |
 | `CHECKSUMS.sha256` | – | file | SHA-256 of every result file, wall-clock columns removed (`tools/verify_results.py`) |
@@ -53,18 +55,18 @@ be regenerated by replaying runs `0 … run` of the same seed.
 ## Layouts (`results/raw/layouts/`)
 
 Node coordinates (`x_m`, `y_m`) of every deterministic or optimised layout:
-`E5_<rule>_r<radius>.csv` (Table 7), `E8_<lattice>_sigma<σ/r>r.csv` and `E16_<lattice>_sigma<σ/r>r.csv` (Table 8, the planned positions
+`E5_<rule>_r<radius>.csv` (Table 9), `E8_<lattice>_sigma<σ/r>r.csv` and `E16_<lattice>_sigma<σ/r>r.csv` (Table 10, the planned positions
 before the drop error), and `E10_<method>_N<N>_seed<seed>.csv` (the final layout of every optimiser
-run in Table 9).
+run in Table 11).
 
 ## Version 1.1 additions
 
 | File | Manuscript | One row per | Columns |
 |---|---|---|---|
-| `E12_risk_sensitivity.csv` | Sec. 6.9, Table 10 | (delta, target) | `N` (Beta rule), `N_mean_rule`, `runs`, `met`, `p_meet` with Wilson `p_lo`, `p_hi`, `nominal` = 1 - delta, `model_p_meet` |
-| `E13_ilp.csv` | Sec. 6.4 | method | `nodes`, `dual_bound` (HiGHS lower bound at the time limit), `gap`, `coverage` on the 250 x 250 raster, `status`, `seconds`, `rho` (radius used in the program), `candidates`, `demand_points`; lattice rows and the Kershner interior bound for reference |
-| `E14_sleep_scheduling.csv` | Sec. 6.9, Table 11 | multiplier | `N`, `N_joint`, `q` (awake probability, Eq. 22), `lifetime_gain` = 1/q, `rounds_always_on`, `rounds` (first-order radio model), `runs`, `met`, `p_both` with Wilson `lo`, `hi` |
-| `E15_heterogeneous.csv` | Sec. 6.9 | (target, rule) | `rule` in {mean radius, rms radius, mixture}, `N`, `runs`, `met`, `p_meet`, `p_lo`, `p_hi`, `mc_mean`, `mc_std`, `model_mean`, `model_std` (Eqs. 4-6 with Eq. 21) |
+| `E12_risk_sensitivity.csv` | Sec. 6.11, Table 15 | (delta, target) | `N` (Beta rule), `N_mean_rule`, `runs`, `met`, `p_meet` with Wilson `p_lo`, `p_hi`, `nominal` = 1 - delta, `model_p_meet` |
+| `E13_ilp.csv` | Sec. 6.5 | method | `nodes`, `dual_bound` (HiGHS lower bound at the time limit), `gap`, `coverage` on the 250 x 250 raster, `status`, `seconds`, `rho` (radius used in the program), `candidates`, `demand_points`; lattice rows and the Kershner interior bound for reference |
+| `E14_sleep_scheduling.csv` | Sec. 6.11, Table 16 | multiplier | `N`, `N_joint`, `q` (awake probability, Eq. 25), `lifetime_gain` = 1/q (energy factor), `rounds_always_on`, `rounds` (first-order radio model), `runs`, `met`, `p_both` with Wilson `lo`, `hi` |
+| `E15_heterogeneous.csv` | Sec. 6.11 | (target, rule) | `rule` in {mean radius, rms radius, mixture}, `N`, `runs`, `met`, `p_meet`, `p_lo`, `p_hi`, `mc_mean`, `mc_std`, `model_mean`, `model_std` (Eqs. 4-6 with Eq. 23) |
 | `raw/E12_runs.csv`, `raw/E14_runs.csv`, `raw/E15_runs.csv` | – | run | one row per simulated drop (E14: per round, with `coverage`, `connected`, `both`) |
 
 `E10_baselines_summary.csv` and `raw/E10_runs.csv` now also contain the method `GA`.
