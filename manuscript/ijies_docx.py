@@ -180,8 +180,12 @@ class Doc:
         self.add(caption(f"Figure. {self.fig_count} {cap}", after=160))
         return self.fig_count
 
-    def table(self, cap, rows, widths, header_rows=1, align=None, size=20, mono_first=False):
-        """Three-line table, 10 pt, kept on one page."""
+    def table(self, cap, rows, widths, header_rows=1, align=None, size=20, mono_first=False, split=False, keep=()):
+        """Three-line table, 10 pt, kept on one page.
+
+        With split=True a long table may continue in the next column: the header row repeats, the header stays
+        with the first body row, the last two rows stay together, and rows listed in keep stay with the next row.
+        """
         self.tab_count += 1
         self.add(caption(f"Table {self.tab_count}. {cap}", keep_next=True, before=120, after=60))
         total = sum(widths)
@@ -204,8 +208,9 @@ class Doc:
                     b += bot
                 jc = (align[ci] if align else ("left" if ci == 0 else "center"))
                 lines = cell.split("\n")
+                kn = "<w:keepNext/>" if (not split or ri <= header_rows or ri >= n - 2 or ri in keep) else ""
                 inner = "".join(
-                    f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="10" w:after="10" w:line="230" w:lineRule="auto"/>'
+                    f'<w:p><w:pPr>{kn}<w:spacing w:before="10" w:after="10" w:line="230" w:lineRule="auto"/>'
                     f'<w:jc w:val="{jc}"/></w:pPr>{rich(ln, size, b=(ri < header_rows))}</w:p>' for ln in lines)
                 xml += (f'<w:tc><w:tcPr><w:tcW w:w="{widths[ci]}" w:type="dxa"/>'
                         f'<w:tcBorders>{b}</w:tcBorders><w:vAlign w:val="center"/></w:tcPr>{inner}</w:tc>')
@@ -260,17 +265,17 @@ class Doc:
             rows = ""
             for latex, num in eqs:
                 om = next(it)
-                left = (f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="40" w:after="40"/><w:ind w:left="283"/><w:jc w:val="left"/></w:pPr>'
+                left = (f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="40" w:after="40"/><w:ind w:left="113"/><w:jc w:val="left"/></w:pPr>'
                         f'<m:oMathPara><m:oMathParaPr><m:jc m:val="left"/></m:oMathParaPr>{om}</m:oMathPara></w:p>')
                 right = (f'<w:p><w:pPr><w:spacing w:before="40" w:after="40"/><w:jc w:val="right"/></w:pPr>'
                          f'{run(f"({num})", 22)}</w:p>')
-                rows += (f'<w:tr><w:trPr><w:cantSplit/></w:trPr><w:tc><w:tcPr><w:tcW w:w="{COL_TW - 560}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{left}</w:tc>'
-                         f'<w:tc><w:tcPr><w:tcW w:w="560" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{right}</w:tc></w:tr>')
+                rows += (f'<w:tr><w:trPr><w:cantSplit/></w:trPr><w:tc><w:tcPr><w:tcW w:w="{COL_TW - 500}" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{left}</w:tc>'
+                         f'<w:tc><w:tcPr><w:tcW w:w="500" w:type="dxa"/><w:vAlign w:val="center"/></w:tcPr>{right}</w:tc></w:tr>')
             tbl = (f'<w:tbl><w:tblPr><w:tblW w:w="{COL_TW}" w:type="dxa"/>'
                    '<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/>'
                    '<w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders><w:tblLayout w:type="fixed"/>'
                    '<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr>'
-                   f'<w:tblGrid><w:gridCol w:w="{COL_TW - 560}"/><w:gridCol w:w="560"/></w:tblGrid>{rows}</w:tbl>')
+                   f'<w:tblGrid><w:gridCol w:w="{COL_TW - 500}"/><w:gridCol w:w="500"/></w:tblGrid>{rows}</w:tbl>')
             self.parts[k] = blank() + tbl + blank()
 
     # ------------------------------------------------------------------ assembly

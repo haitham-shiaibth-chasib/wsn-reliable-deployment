@@ -68,7 +68,8 @@ def _paragraphs(xml):
 
 
 def _math_key(m_xml):
-    return re.sub(r"\s+", "", "".join(re.findall(r"<m:t[^>]*>(.*?)</m:t>", m_xml, re.S)))
+    """Symbols of an equation in order; spacing, brackets and line layout are not content."""
+    return re.sub(r"[\s\[\](){}&\u2009\u2005\u2002\u2003]+", "", "".join(re.findall(r"<m:t[^>]*>(.*?)</m:t>", m_xml, re.S)))
 
 
 def _redden_rpr(run_xml):

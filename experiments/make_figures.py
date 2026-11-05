@@ -26,7 +26,7 @@ os.makedirs(FIG, exist_ok=True)
 
 C1, C2, C3, C4, C5, C6 = "#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7", "#e87ba4", "#008300"
 INK, MUTED, GRIDC = "#0b0b0b", "#52514e", "#dddcd8"
-W, H = 3.0, 1.9                          # inserted at 7.6 cm, one IJIES column
+W, H = 3.0, 1.75                         # inserted at 7.6 cm, one IJIES column
 
 from matplotlib import font_manager  # noqa: E402
 
@@ -83,17 +83,17 @@ def save(fig, name):
 
 # ----------------------------------------------------------------------------- Fig 1 framework
 def fig_framework():
-    fig, ax = plt.subplots(figsize=(W, 4.3))
+    fig, ax = plt.subplots(figsize=(W, 3.95))
     ax.set_xlim(-0.2, 10.2)
-    ax.set_ylim(0, 18.55)
+    ax.set_ylim(0, 17.05)
     ax.axis("off")
     boxes = [
-        (16.0, "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ"),
-        (13.4, "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)"),
-        (10.8, "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)"),
-        (8.2, "Connectivity rule: smallest N with\nP(no isolated node) ≥ 1 − δ/2"),
-        (5.6, "Design: random drop, N = larger rule;\nplanned drop, error-tolerant lattice"),
-        (3.0, "Certification on fresh drops: accept\nif lower bound ≥ 1 − δ, else enlarge"),
+        (14.5, "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ"),
+        (12.15, "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)"),
+        (9.8, "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)"),
+        (7.45, "Connectivity rule: smallest N with\nP(no isolated node) ≥ 1 − δ/2"),
+        (5.1, "Design: random drop, N = larger rule;\nplanned drop, error-tolerant lattice"),
+        (2.75, "Certification on fresh drops: accept\nif lower bound ≥ 1 − δ, else enlarge"),
         (0.4, "Output: certified node count or layout\n(or: not certified)"),
     ]
     last = len(boxes) - 1
@@ -116,21 +116,23 @@ def fig_calibration():
     groups = list(dict.fromkeys(q["name"] for q in rows))
     style = {"small N": (C1, "o"), "very high target": (C2, "s"), "rectangle 2:1": (C3, "^"),
              "rectangle 4:1": (C4, "v"), "L-shaped field": (C5, "D"), "field with a hole": (C6, "P")}
-    fig, ax = plt.subplots(figsize=(W, 2.5))
+    short = {"small N": "small N", "very high target": "high $C_t$", "rectangle 2:1": "rect. 2:1",
+             "rectangle 4:1": "rect. 4:1", "L-shaped field": "L-shape", "field with a hole": "hole"}
+    fig, ax = plt.subplots(figsize=(W, 2.3))
     ax.plot([0, 1], [0, 1], color=INK, lw=0.8, ls="--", zorder=1)
     for g in groups:
         q = [x for x in rows if x["name"] == g]
         col, mk = style.get(g, (MUTED, "o"))
         ax.errorbar([x["predicted"] for x in q], [x["observed"] for x in q],
                     yerr=[[x["observed"] - x["lower"] for x in q], [x["upper"] - x["observed"] for x in q]],
-                    fmt=mk, ms=3.2, color=col, ecolor=col, elinewidth=0.6, capsize=0, lw=0, label=g, zorder=2)
+                    fmt=mk, ms=3.2, color=col, ecolor=col, elinewidth=0.6, capsize=0, lw=0, label=short.get(g, g), zorder=2)
     lo = min(min(x["predicted"] for x in rows), min(x["lower"] for x in rows))
     lo = max(0.0, math.floor(lo * 20) / 20)
     ax.set_xlim(lo, 1.0)
     ax.set_ylim(lo, 1.0)
     ax.set_xlabel("Predicted P(C ≥ $C_t$), Beta rule")
     ax.set_ylabel("Observed share of drops")
-    ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=2, handletextpad=0.2, columnspacing=0.6,
+    ax.legend(loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=3, handletextpad=0.2, columnspacing=0.6,
               labelspacing=0.2, handlelength=1.0, borderaxespad=0.2)
     save(fig, "paper_fig11_calibration.png")
 
@@ -248,7 +250,7 @@ def fig_placement():
     e17 = load("E17_certification.csv")
     n_cert = [x for x in e17 if x["part"] == "coverage" and x["L"] == 200 and x["r"] == 25 and x["target"] == 0.99]
     n_cert = int(n_cert[-1]["N_certified"])                    # same L / r as the 500 m field with r = 62.5 m
-    fig, ax = plt.subplots(figsize=(W, 2.3))
+    fig, ax = plt.subplots(figsize=(W, 2.15))
     for kind, col, mk in (("triangular", C4, "o"), ("square", C3, "s")):
         q = [x for x in rows if x["kind"] == kind]
         ax.plot([x["sigma_over_r"] for x in q], [x["robust_nodes"] for x in q], color=col, marker=mk, ms=4)
@@ -282,7 +284,7 @@ def fig_baselines():
     methods = [("Random", C2, "v"), ("VFA", C5, "D"), ("GWO", C6, "^"), ("VASF-PSO", C3, "s"),
                ("PSO", "#eda100", "P"), ("ICGWO", MUTED, "X"), ("DAR-SSA", C1, "o"), ("GA", "#8a5a2b", "h"),
                ("Proposed", C4, "*")]
-    fig, ax = plt.subplots(figsize=(W, 2.1))
+    fig, ax = plt.subplots(figsize=(W, 1.85))
     for m, col, mk in methods:
         q = sorted([x for x in rows if x["method"] == ("Proposed lattice" if m == "Proposed" else m)], key=lambda x: x["N"])
         if not q:
@@ -322,7 +324,7 @@ def fig_environment():
     scen = list(dict.fromkeys(q["scenario"] for q in rows))
     labels = {"Open, unit disk": "Open\nfield", "Open, shadowing 8 dB": "Open\n8 dB",
               "Urban, no shadowing": "Urban\n0 dB", "Urban, shadowing 8 dB": "Urban\n8 dB"}
-    fig, ax = plt.subplots(figsize=(W, 2.0))
+    fig, ax = plt.subplots(figsize=(W, 1.85))
     w = 0.27
     for i, (rule, col, lab) in enumerate([("open_field_rule", C2, "Open-field"),
                                           ("environment_aware_rule", C4, "Aware, analytic"),
