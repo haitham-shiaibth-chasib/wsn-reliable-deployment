@@ -196,9 +196,9 @@ so every optimiser returns the best layout found during its run.
 
 ## License and citation
 
-The version used in the revised article (v1.3.0) is archived at Zenodo; the concept DOI
-https://doi.org/10.5281/zenodo.23717648 always resolves to the latest version (v1.2.0, the submitted version:
-https://doi.org/10.5281/zenodo.23717649).
+The version used in the revised article (v1.3.0) is archived at Zenodo as its own version; the concept DOI
+https://doi.org/10.5281/zenodo.23717648 always resolves to the latest version. The submitted version (v1.2.0)
+is https://doi.org/10.5281/zenodo.23717649.
 
 Code is released under the MIT License (`LICENSE`); data and figures under the same terms. Citation
 metadata are in `CITATION.cff`.

@@ -808,6 +808,8 @@ _joint_rows = {(q["Rc"], q["target"]): q for k, q in e17_final.items() if k[0] =
 _env_rows = {k[1]: q for k, q in e17_final.items() if k[0] == "environment"}
 _extra_cov = [int(q["N_certified"]) - int(q["N_rule"]) for q in _cov_cert]
 _two_steps = sum(1 for q in _cov_cert if 2 <= int(q["attempt"]) <= 3)
+_pl_min = min(_e17_cert, key=lambda q: float(q["lower_bound"]))
+_pl_max = max(_e17_cert, key=lambda q: float(q["lower_bound"]))
 d.h2("6.3 Certification of the random-drop designs")
 d.p(f"Table 8 lists the node counts after Algorithm 3, with {CP_N:,} new drops per attempt. Of the sixteen coverage "
     f"designs, {_cov_first_pass} passed at the first attempt, and "
@@ -820,7 +822,11 @@ d.p(f"Table 8 lists the node counts after Algorithm 3, with {CP_N:,} new drops p
     "smallest count that meets the requirement; a downward search would need its own correction for multiplicity. "
     + (f"Every design in the table was certified; for each of them, the probability of certifying it although its "
        f"true success probability is below 0.95 is at most 0.05 under the model. This bound holds for each design "
-       "separately; it is not a joint statement about all designs of Tables 8, 10 and 14." if not _failed else
+       "separately; it is not a joint statement about all designs of Tables 8, 10 and 14."
+       f" The one-sided lower bounds {{{{p_L}}}} of the {len(_e17_cert)} certified designs lie between "
+       f"{pct(min(float(q['lower_bound']) for q in _e17_cert), 1)} ({int(_pl_min['N_certified'])} nodes; {{{{L}}}} = {int(_pl_min['L'])} m, {{{{r}}}} = {int(_pl_min['r'])} m, "
+       f"{{{{C_t}}}} = {_pl_min['target']:g}) and {pct(max(float(q['lower_bound']) for q in _e17_cert), 1)} ({int(_pl_max['N_certified'])} nodes; {{{{L}}}} = {int(_pl_max['L'])} m, "
+       f"{{{{C_t}}}} = {_pl_max['target']:g}); the bound of every attempt is listed in results/E17_certification.csv." if not _failed else
        f"{len(_failed)} design{'s' if len(_failed) > 1 else ''} could not be certified within ten attempts and "
        f"{'are' if len(_failed) > 1 else 'is'} reported as such."))
 _cell = lambda q: (f"{int(q['N_rule'])}→{int(q['N_certified'])}" if q["N_certified"] != "" else f"{int(q['N_rule'])}→n.c.")
@@ -1203,7 +1209,10 @@ _region_text = (
        "Calibration within sampling error is not a certificate, however: Algorithm 3 certified "
        + (f"all 14 designs" if _stress_cert == len(e19) else f"{_stress_cert} of the 14 designs")
        + f" and added up to {pct(max(_stress_extra), 0)} more nodes. Within the tested range the rule is thus a "
-       "reliable starting point, and Algorithm 3 supplies the probability statement. "))
+       "reliable starting point, and Algorithm 3 supplies the probability statement. "
+       f"The one-sided lower bounds of the {_stress_cert} certified designs lie between "
+       f"{pct(min(float(q['certified_lower']) for q in e19 if q['N_certified'] != ''), 1)} and "
+       f"{pct(max(float(q['certified_lower']) for q in e19 if q['N_certified'] != ''), 1)}."))
 d.h2("6.10 Stress study")
 d.p("Fig. 9 and Table 14 test the Beta rule outside the settings in which it was developed: small networks "
     "({{r}} = 40 m in a 200 m field, 22 to 74 nodes), very high targets (0.995 and 0.999), rectangles with aspect "
@@ -1257,7 +1266,11 @@ d.p("Shadowing on links that share a node is correlated in measurements, with co
     "drops met both targets) and certified the result: " + "; ".join(f"the case with correlation {q['link_correlation']:g} needed {_corr_need(q)}"
                                    for q in _cs[1:])
     + ". The isolated-node rule therefore holds for independent shadowing only; when link shadowing is correlated, "
-    "the connectivity term has to be sized by simulation with the correlation included.")
+    "the connectivity term has to be sized by simulation with the correlation included. Taken together, Sections "
+    "6.2 to 6.10 support the rule as a starting point, to be followed by Algorithm 3, for targets up to 0.999, node "
+    "counts down to about 22, field aspect ratios up to 4, L-shaped and holed fields, lattice drop errors up to the "
+    "sensing radius and independent link shadowing; outside this region, that is among buildings or with correlated "
+    "shadowing, the connectivity term must be simulated and then certified.")
 
 # ---- 6.11 risk, heterogeneous, scheduling
 d.h2("6.11 Risk level, heterogeneous radii and sleep scheduling")
