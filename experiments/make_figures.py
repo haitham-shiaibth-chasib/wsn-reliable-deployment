@@ -83,30 +83,36 @@ def save(fig, name):
 
 # ----------------------------------------------------------------------------- Fig 1 framework
 def fig_framework():
-    fig, ax = plt.subplots(figsize=(W, 3.95))
-    ax.set_xlim(-0.2, 10.2)
-    ax.set_ylim(0, 17.05)
-    ax.axis("off")
-    boxes = [
-        (14.5, "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ"),
-        (12.15, "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)"),
-        (9.8, "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)"),
-        (7.45, "Connectivity rule: smallest N with\nP(no isolated node) ≥ 1 − δ/2"),
-        (5.1, "Design: random drop, N = larger rule;\nplanned drop, error-tolerant lattice"),
-        (2.75, "Certification on fresh drops: accept\nif lower bound ≥ 1 − δ, else enlarge"),
-        (0.4, "Output: certified node count or layout\n(or: not certified)"),
+    texts = [
+        "Inputs: field side L, sensing radius r,\ncommunication range $R_c$, target $C_t$,\nrisk level δ, failure rate f, drop error σ",
+        "Edge-corrected statistics: mean E[C]\nand variance Var(C), Eqs. (3)-(6)",
+        "Coverage rule: smallest N with\nP(C ≥ $C_t$) ≥ 1 − δ/2 (Beta model)",
+        "Connectivity rule: smallest N with\n$e^{-E[N_{iso}]}$ ≥ 1 − δ/2 (Eq. 9)",
+        "Design: random drop, N = larger rule;\nplanned drop, error-tolerant lattice",
+        "Certification on fresh drops: accept\nif lower bound ≥ 1 − δ, else enlarge",
+        "Output: certified node count or layout\n(or: not certified)",
     ]
-    last = len(boxes) - 1
-    for i, (y, text) in enumerate(boxes):
+    step, hgt, pad = 2.75, 1.75, 0.08          # box pitch, box height, rounding pad (data units)
+    last = len(texts) - 1
+    ys = [0.4 + step * (last - i) for i in range(len(texts))]
+    heights = [2.4 if i == 0 else hgt for i in range(len(texts))]
+    top = ys[0] + heights[0] + 0.2
+    fig, ax = plt.subplots(figsize=(W, 3.95 * top / 17.05))
+    ax.set_xlim(-0.2, 10.2)
+    ax.set_ylim(0, top)
+    ax.axis("off")
+    for i, (y, text) in enumerate(zip(ys, texts)):
         grey = i in (0, last)
         fc = "#f3f2ee" if grey else ("#e7f6ef" if i == 5 else "#eaf1fb")
         ec = MUTED if grey else (C3 if i == 5 else C1)
-        hgt = 2.4 if i == 0 else 1.75
-        ax.add_patch(FancyBboxPatch((0.0, y - 0.05), 10.0, hgt, boxstyle="round,pad=0.08", fc=fc, ec=ec, lw=1.0))
-        ax.text(5, y + hgt / 2 - 0.05, text, ha="center", va="center", fontsize=10, color=INK)
-        if i < last:
-            ax.annotate("", xy=(5, boxes[i + 1][0] + 1.85), xytext=(5, y - 0.15),
-                        arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.0))
+        h = heights[i]
+        ax.add_patch(FancyBboxPatch((0.0, y - 0.05), 10.0, h, boxstyle=f"round,pad={pad}", fc=fc, ec=ec, lw=1.0))
+        ax.text(5, y + h / 2 - 0.05, text, ha="center", va="center", fontsize=10, color=INK)
+        if i < last:                            # arrow drawn only in the gap between the two boxes
+            y_from = y - 0.05 - pad
+            y_to = ys[i + 1] - 0.05 + heights[i + 1] + pad
+            ax.annotate("", xy=(5, y_to), xytext=(5, y_from),
+                        arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.0, shrinkA=1, shrinkB=1))
     save(fig, "paper_fig1_framework.png")
 
 

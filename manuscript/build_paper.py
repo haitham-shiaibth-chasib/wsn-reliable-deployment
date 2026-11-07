@@ -24,6 +24,7 @@ _ap.add_argument("--template", default=os.path.join(HERE, "IJIES_Format.docx"),
 _ap.add_argument("--out", default=os.path.join(HERE, "IJIES_Manuscript_Reliable_WSN_Deployment.docx"))
 _ap.add_argument("--doi", default="10.5281/zenodo.23717648", help="Zenodo DOI of the archived code (concept DOI: resolves to the latest version)")
 _ap.add_argument("--github", default="https://github.com/haitham-shiaibth-chasib/wsn-reliable-deployment")
+_ap.add_argument("--code-version", default="1.3.1", help="version of the archived code cited in the article")
 ARGS = _ap.parse_args()
 ROOT = ARGS.root
 RES, FIG = os.path.join(ROOT, "results"), os.path.join(ROOT, "figures")
@@ -53,7 +54,9 @@ EMAIL = "haitham.aljabry2014@gmail.com"
 
 
 def pct(x, d=1):
-    return f"{100 * x:.{d}f}%"
+    from decimal import Decimal, ROUND_HALF_UP          # 0.9755 -> 97.6, not the binary-float 97.5
+    v = (Decimal(repr(float(x))) * 100).quantize(Decimal(1).scaleb(-d), rounding=ROUND_HALF_UP)
+    return f"{v}%"
 
 
 _SUP = str.maketrans("0123456789-", "⁰¹²³⁴⁵⁶⁷⁸⁹⁻")
@@ -72,6 +75,10 @@ REFS = {
     "saheb": "S. I. Saheb, K. U. R. Khan, and C. S. Bindu, “A Multi-Objective Sensor Deployment using BAT Algorithm to Improve Coverage, Lifetime and Energy Consumption in Wireless Sensor Networks”, International Journal of Intelligent Engineering and Systems, Vol. 15, No. 3, pp. 467-477, 2022.",
     "ahmed": "A. S. Ahmed, I. N. Abood, and M. S. Taha, “Adaptive Multi-objective Optimization for Obstacle-aware Wireless Sensor Network Deployment: A Comparative Analysis of State-of-the-Art Algorithms”, International Journal of Intelligent Engineering and Systems, Vol. 19, No. 2, pp. 707-720, 2026.",
     "priyadarshi": "R. Priyadarshi, “Efficient Node Deployment for Enhancing Coverage and Connectivity in Wireless Sensor Networks”, Scientific Reports, Vol. 15, No. 1, p. 29052, 2025.",
+    "robbins": "H. E. Robbins, “On the Measure of a Random Set”, Annals of Mathematical Statistics, Vol. 15, No. 1, pp. 70-74, 1944.",
+    "garwood": "F. Garwood, “The Variance of the Overlap of Geometrical Figures with Reference to a Bombing Problem”, Biometrika, Vol. 34, No. 1-2, pp. 1-17, 1947.",
+    "takahara": "G. Takahara, K. Xu, and H. Hassanein, “How Resilient is Grid-based WSN Coverage to Deployment Errors?”, In: Proc. of IEEE Wireless Communications and Networking Conf., Hong Kong, China, pp. 2872-2877, 2007.",
+    "balister": "P. Balister and S. Kumar, “Random vs. Deterministic Deployment of Sensors in the Presence of Failures and Placement Errors”, In: Proc. of IEEE INFOCOM, Rio de Janeiro, Brazil, pp. 2896-2900, 2009.",
     "hall": "P. Hall, Introduction to the Theory of Coverage Processes, John Wiley & Sons, New York, 1988.",
     "liutowsley": "B. Liu and D. Towsley, “A Study of the Coverage of Large-Scale Sensor Networks”, In: Proc. of IEEE International Conf. on Mobile Ad-hoc and Sensor Systems, Fort Lauderdale, USA, pp. 475-483, 2004.",
     "wang": "B. Wang, “Coverage Problems in Sensor Networks: A Survey”, ACM Computing Surveys, Vol. 43, No. 4, pp. 1-53, 2011.",
@@ -95,7 +102,7 @@ REFS = {
     "siamantas": "G. Siamantas and D. Kandris, “Particle Swarm Optimization for k-Coverage and 1-Connectivity in Wireless Sensor Networks”, Electronics, Vol. 13, No. 23, p. 4841, 2024.",
     "amer": "D. A. Amer, S. A. Soliman, A. F. Hassan, and A. A. Zamel, “Enhancing Connectivity and Coverage in Wireless Sensor Networks: A Hybrid Comprehensive Learning-Fick’s Algorithm with Particle Swarm Optimization for Router Node Placement”, Neural Computing and Applications, Vol. 36, No. 34, pp. 21671-21702, 2024.",
     "jin": "Z. Jin, Y. Geng, C. Zhu, Y. Xia, X. Deng, L. Yi, and X. Wang, “Deployment Optimization for Target Perpetual Coverage in Energy Harvesting Wireless Sensor Network”, Digital Communications and Networks, Vol. 10, No. 2, pp. 498-508, 2024.",
-    "haris": "M. Haris and H. Nam, “Sensor Node Deployment Optimization for Continuous Coverage in WSNs”, Sensors, Vol. 25, No. 12, p. 3620, 2025.",
+    "haris": "H. Muhammad and H. Nam, “Sensor Node Deployment Optimization for Continuous Coverage in WSNs”, Sensors, Vol. 25, No. 12, p. 3620, 2025.",
     "shaikh": "M. S. Shaikh, C. Wang, S. Xie, G. Zheng, X. Dong, S. Qiu, M. A. Ahmad, and S. Raj, “Coverage and Connectivity Maximization for Wireless Sensor Networks Using Improved Chaotic Grey Wolf Optimization”, Scientific Reports, Vol. 15, No. 1, p. 15706, 2025.",
     "heinzelman": "W. R. Heinzelman, A. Chandrakasan, and H. Balakrishnan, “Energy-Efficient Communication Protocol for Wireless Microsensor Networks”, In: Proc. of Hawaii International Conf. on System Sciences, Maui, USA, pp. 1-10, 2000.",
     "tian": "D. Tian and N. D. Georganas, “A Coverage-Preserving Node Scheduling Scheme for Large Wireless Sensor Networks”, In: Proc. of ACM International Workshop on Wireless Sensor Networks and Applications, Atlanta, USA, pp. 32-41, 2002.",
@@ -320,14 +327,15 @@ ABSTRACT = (
     "Random deployments are usually sized for the expected coverage, so about half of them miss the target. "
     "A design rule combines an edge-corrected mean and "
     "variance of area coverage, a Beta approximation of its distribution and an edge-corrected isolated-node "
-    "condition; planned drops use a lattice shrunk to absorb drop errors. Each design is then accepted only when a "
-    "one-sided Clopper-Pearson bound on its success probability, computed from independent simulated drops with a "
-    "Bonferroni correction over attempts, reaches the required level. In sixteen settings the rule met a 95 percent "
-    f"target in {beta_lo*100:.0f} to {beta_hi*100:.0f} percent of drops, against {mean_lo*100:.0f} to "
-    f"{mean_hi*100:.0f} percent for the mean rule, and certifying the designs added at most {max(_cov_extra)*100:.1f} "
-    "percent more nodes. With drop errors of 30 percent of the sensing radius, a certified lattice needed "
-    f"{_lat03_nodes} nodes and a certified random drop {int(_rand_cert['N_certified'])}. A stress study maps the "
-    "operating region of the rule."
+    "condition; planned drops use a lattice shrunk to absorb drop errors. Each main design is accepted only when a "
+    "one-sided Clopper-Pearson bound on its success probability, from independent simulated drops and corrected for "
+    "repeated attempts, reaches the required level; the certificate holds under the simulation "
+    f"model. Against a required 95 percent, {beta_lo*100:.1f} to {beta_hi*100:.1f} percent of drops met the target "
+    f"in sixteen settings (mean rule: {mean_lo*100:.1f} to {mean_hi*100:.1f} percent), and "
+    f"certification added at most {max(_cov_extra)*100:.1f} percent more nodes. With drop errors of 0.3 "
+    f"sensing radii, a certified lattice needed {_lat03_nodes} nodes and a certified random drop "
+    f"{int(_rand_cert['N_certified'])}. A stress study maps where the rule holds; correlated link shadowing lies "
+    "outside it."
 )
 assert len(ABSTRACT.split()) <= 150, len(ABSTRACT.split())
 KEYWORDS = ("Wireless sensor networks, Sensor deployment, Coverage reliability, Statistical certification, "
@@ -373,8 +381,8 @@ d.p("Most practical sizing rules answer that question with an expected value. Th
 d.p("Planned deployments have a different weakness. Classical lattice results give the least dense full cover of the "
     "plane [@kershner] and the patterns that join coverage and connectivity [@bai, @zhanghou], and recent tessellation "
     "work extends them to connected k-coverage [@nakka2023, @nakka2024, @nakka2025]. These results assume that every "
-    "node lands exactly where it was planned, an assumption that aerial drops violate, and grid layouts are rigid on "
-    "irregular terrain and costly in redundant nodes [@priyadarshi]. A large body of recent work optimizes "
+    "node lands exactly where it was planned, an assumption that aerial drops violate, and grid layouts adapt poorly to heterogeneous "
+    "nodes and changing conditions [@priyadarshi]. A large body of recent work optimizes "
     "node positions with metaheuristics [@tossa, @bhargavi, @siamantas, @amer, @haris, @shaikh, @ou, @kheam, @saheb, @ahmed]. These "
     "methods maximize coverage for a fixed number of nodes with thousands of fitness evaluations, but report "
     "neither the probability that the layout survives placement errors nor the number of nodes that a given target "
@@ -386,10 +394,10 @@ d.p("This paper addresses one practical question: how many nodes, and in what la
     "on drops that played no part in choosing it, and it is reported as certified only when a one-sided confidence "
     "bound on its success probability reaches the required level. The contributions are as follows.")
 for item in [
-    f"Edge-corrected mean and variance of the covered fraction of a square field for a fixed number of nodes, with the variance summed over all pairs of points, including the negatively correlated pairs farther apart than the sensing diameter; the predicted standard deviation is within {pct(std_rel_exact, 1)} of simulation on average, against {pct(std_rel_stat, 1)} for the stationary approximation.",
-    f"A design rule built on a moment-matched Beta distribution, stated as an approximation with explicit error terms, and a certification layer that accepts a design only when the one-sided Clopper-Pearson lower bound [@clopper] of its success probability on independent drops reaches 1 − {{{{δ}}}}, with a Bonferroni correction over the attempts of the search. The rule met the 95% target in {pct(beta_lo, 0)} to {pct(beta_hi, 0)} of drops over sixteen settings; {('all ' + str(len(_e17_all))) if len(_e17_cert) == len(_e17_all) else (str(len(_e17_cert)) + ' of the ' + str(len(_e17_all)))} random-drop designs tested were certified, with at most {max(e17_cert_extra) * 100:.1f}% more nodes than the rule.",
+    f"An edge-corrected evaluation of the classical mean and variance [@robbins, @garwood] of the covered fraction of a square field for a fixed number of nodes, with the variance summed over all pairs of points, including the negatively correlated pairs farther apart than the sensing diameter; the predicted standard deviation is within {pct(std_rel_exact, 1)} of simulation on average, against {pct(std_rel_stat, 1)} for the stationary approximation.",
+    f"A design rule built on a moment-matched Beta distribution, stated as an approximation with explicit error terms, and a certification layer that accepts a design only when the one-sided Clopper-Pearson lower bound [@clopper] of its success probability on independent drops reaches 1 − {{{{δ}}}}, with a Bonferroni correction over the attempts of the search. Against a required 95%, {pct(beta_lo, 1)} to {pct(beta_hi, 1)} of drops met the target over sixteen settings; {('all ' + str(len(_e17_all))) if len(_e17_cert) == len(_e17_all) else (str(len(_e17_cert)) + ' of the ' + str(len(_e17_all)))} random-drop designs tested were certified, with at most {max(e17_cert_extra) * 100:.1f}% more nodes than the rule.",
     "A joint coverage and connectivity rule based on an edge-corrected isolated-node probability, with expected-coverage expressions for node failures, k-coverage and probabilistic (Elfes) sensing, and extensions to heterogeneous sensing radii (independent mixture and fixed class counts), obstacles with line-of-sight sensing and log-normal link shadowing; the same rule sets a randomized sleep schedule, whose reliability is reported over deployments and for each deployment.",
-    "A drop-error-tolerant lattice whose expected coverage under Gaussian placement error is evaluated in closed form through the non-central chi-square distribution, with a fully specified offset search and pruning, a raster-free test of full coverage, a connectivity check after pruning, and certified designs for drop errors up to the sensing radius.",
+    "A drop-error-tolerant lattice whose expected coverage under Gaussian placement error is evaluated in closed form through the non-central chi-square distribution, extending earlier grid-error estimates [@takahara, @balister], with a fully specified offset search and pruning, a raster-free test of full coverage, a connectivity check after pruning, and certified designs for drop errors up to the sensing radius.",
     "An evaluation against eight baselines with a parameter sensitivity study and measured run time and memory, an integer program at three grid resolutions together with a lower bound that holds for every continuous layout, and a stress study with small networks, very high targets, elongated and irregular fields and correlated link shadowing.",
 ]:
     d.add(para(rich(cite(item)), jc="both", first_line=0, ind_left=300, hanging=300))
@@ -402,12 +410,14 @@ d.p("**Analytical models.** Hall's coverage processes give the covered fraction 
     "patterns that are optimal for both [@bai], Kumar et al. studied k-coverage of mostly sleeping networks [@kumar], "
     "and Nakka and Ammari built tessellations for connected k-coverage [@nakka2023, @nakka2024, @nakka2025]. Border "
     "effects [@fan, @liuz], heterogeneous sensing regions [@lazos] and perimeter-based coverage tests [@huangtseng] "
-    "have also been analyzed. None of them gives the distribution of coverage for a finite number of nodes, which a "
-    "reliability statement needs, and none models placement error.")
+    "have also been analyzed. These works give the mean coverage or asymptotic conditions; they do not size a finite "
+    "drop for a stated probability of meeting a target. Grid coverage under placement error has been estimated for "
+    "uniform and Gaussian errors [@takahara], and lattice and random deployments have been compared under placement "
+    "errors and failures [@balister].")
 d.p("**Optimization-based deployment.** The virtual force algorithm (VFA) spreads nodes by mutual repulsion [@zou], "
     "and particle swarm optimization (PSO) [@kennedy], the grey wolf optimizer (GWO) [@mirjalili] and the sparrow "
-    "search algorithm (SSA) [@xue] became the standard tools. Recent work compares deployment strategies up to "
-    "drone-assisted drops [@priyadarshi], adds connectivity constraints [@tossa] or Delaunay triangulation [@bhargavi], "
+    "search algorithm (SSA) [@xue] became the standard tools. Recent work compares random, grid and deterministic "
+    "placement [@priyadarshi], adds connectivity constraints [@tossa] or Delaunay triangulation [@bhargavi], "
     "hybridizes PSO with Fick's law [@amer], targets perpetual coverage with energy harvesting [@jin], treats "
     "k-coverage with connectivity [@siamantas, @nguyen], and "
     "proposes velocity-scaled adaptive search factor PSO (VASF-PSO) [@haris], improved chaotic GWO (ICGWO) [@shaikh], "
@@ -417,7 +427,7 @@ d.p("**Optimization-based deployment.** The virtual force algorithm (VFA) spread
     "positions [@chakrabarty] give a reference for the fewest nodes but scale poorly with the grid size.")
 d.p("**Probabilistic sensing and deployment cost.** A second recent line replaces the binary disk by a detection "
     "model. Guo et al. derived a log-distance path-loss model and a Neyman-Pearson detection probability under a "
-    "false-alarm constraint, and maximized the coverage rate of a limited number of nodes with a swarm optimizer "
+    "false-alarm constraint, and maximized the coverage rate of a limited number of nodes with an intelligent optimization algorithm "
     "[@guo2025]. Liu et al. combined deployment cost, energy, connectivity and sensing probability in one weighted "
     "objective for industrial networks with obstacles and solved it with a hybrid particle swarm and genetic "
     "algorithm [@liu2024]. Both refine what a single node detects; neither states how likely a given number of "
@@ -431,13 +441,16 @@ d.p("**Scheduling and lifetime.** Redundant nodes can sleep without losing cover
     "[@luo] or measured with coverage-differentiated metrics [@nurcan]. These schedules start from a given deployment; "
     "none of them states how many nodes must be dropped so that the schedule meets a coverage target with a stated "
     "probability.")
-d.p("**What is new.** The ingredients are established: the Boolean coverage model [@hall], border corrections of the "
-    "mean [@fan, @liuz], the isolated-node view of connectivity [@penrose, @bettstetter], moment matching, exact "
-    "binomial bounds [@clopper], the non-central chi-square law [@simon] and the triangular cover [@kershner, @bai]. "
-    "What we add is (i) the exact finite-field variance for a fixed node count and its use to size a drop for a "
-    "probability target, (ii) a design-then-certify procedure that keeps the design and the certification samples "
-    "apart and controls the error of an adaptive search, (iii) the closed-form expected coverage of a perturbed "
-    "lattice and lattices sized and certified for drop error, and (iv) the evaluation described above. Table 1 "
+d.p("**What is new.** The ingredients are established: the Boolean coverage model [@hall], the moments of the "
+    "measure of a random set [@robbins] and their evaluation for a square covered by a fixed number of disks "
+    "[@garwood], border corrections of the mean [@fan, @liuz], the isolated-node view of connectivity [@penrose, "
+    "@bettstetter], moment matching, exact binomial bounds [@clopper], the non-central chi-square law [@simon] and "
+    "the triangular cover [@kershner, @bai]. What we add is (i) an edge-corrected numerical evaluation of the "
+    "fixed-count variance, with every far-pair term kept, and its use to size a drop for a probability target, "
+    "(ii) a design-then-certify procedure that keeps the design and the certification samples apart and controls "
+    "the error of an adaptive search, (iii) a closed form for the expected coverage of a lattice under Gaussian drop "
+    "error and lattices sized and certified for that error, which extends the grid-error estimates of [@takahara, "
+    "@balister], and (iv) the evaluation described above. Table 1 "
     "summarizes where this work sits.")
 d.table("Comparison with related deployment studies",
         [["Study", "Finite-field statistics", "Probability statement", "Connected", "Drop error"],
@@ -448,6 +461,7 @@ d.table("Comparison with related deployment studies",
          ["[@haris, @shaikh, @kheam]", "No", "No", "Partly", "No"],
          ["[@priyadarshi]", "No", "No", "Yes", "No"],
          ["[@guo2025, @liu2024]", "No", "No", "No / Yes", "No"],
+         ["[@takahara, @balister]", "No", "No", "No", "Yes"],
          ["This work", "Mean and variance", "Rule and certificate", "Yes", "Yes"]],
         [850, 1000, 1100, 1050, 600])
 
@@ -497,8 +511,8 @@ d.p("Let {{a(x, y)}} be the probability that one node covers both {{x}} and {{y}
     "probability {{u(x, y)^N}}, and the variance of {{C}} is")
 d.eq(r"\begin{array}{l}\mathrm{Var}\left(C\right)=\frac{1}{A^{2}}\int_{F}\int_{F}\left[u(\mathbf{x},\mathbf{y})^{N}\right.\\ \qquad\left.-\left(1-a(\mathbf{x})\right)^{N}\left(1-a(\mathbf{y})\right)^{N}\right]d\mathbf{x}\,d\mathbf{y}\end{array}")
 d.eq(r"u(\mathbf{x},\mathbf{y})=1-a(\mathbf{x})-a(\mathbf{y})+a(\mathbf{x},\mathbf{y})")
-d.p("Two kinds of pairs contribute. Points closer than {{2r}} share the lens, and their coverage indicators are "
-    "positively correlated. Points farther apart have {{a(x, y) = 0}}, and their covariance "
+d.p("Two kinds of pairs contribute. Points closer than {{2r}} share the lens; their coverage indicators are "
+    "positively correlated where {{a(x, y) > a(x)a(y)}}, which holds except in a thin band just below {{2r}}. Points farther apart have {{a(x, y) = 0}}, and their covariance "
     "{{(1 − a(x) − a(y))^N − (1 − a(x))^N (1 − a(y))^N}} is negative: with a fixed number of nodes, a node that covers "
     "{{x}} cannot also cover {{y}}. This far-pair term vanishes only when the node count is Poisson distributed. "
     "Eq. (5) therefore runs over all pairs. We discretize it on an {{M × M}} grid of points, "
@@ -534,10 +548,11 @@ d.p("The connectivity rule {{N_conn}} is the smallest {{N}} with {{P_conn ≥ 1 
 d.eq(r"N^{\star}=\max\left(N_{\mathrm{cov}},\,N_{\mathrm{conn}}\right)")
 d.p("The union bound gives, at {{N^⋆}},")
 d.eq(r"\begin{array}{l}P\left(C\geq C_{t}\wedge\mathrm{connected}\right)\\ \qquad\geq 1-\delta-\varepsilon_{\mathrm{cov}}-\varepsilon_{\mathrm{conn}}\end{array}")
-d.p("where {{ε_cov = P(C < C_t) − δ/2}} and {{ε_conn = P(not connected) − (1 − P_conn)}} are the signed errors of the "
-    "Beta and of the isolated-node approximations. Only the union bound in Eq. (11) is exact. The error terms have "
-    "no analytical bound, and {{ε_conn}} is positive whenever a network without isolated nodes can still split, which "
-    "happens at low connectivity and among obstacles. Eq. (10) is therefore an approximate design rule; the "
+d.p("where {{ε_cov = P(C < C_t) − B}} and {{ε_conn = P(not connected) − (1 − P_conn)}} are the signed errors of the "
+    "Beta and of the isolated-node approximations, {{B}} being the Beta probability of {{C < C_t}} at {{N^⋆}}, which "
+    "is at most {{δ/2}}. Only the union bound in Eq. (11) is exact. The error terms have no analytical bound; "
+    "{{ε_conn}} contains a non-negative part, {{P(not connected) − P(some node isolated)}}, which grows when a network "
+    "without isolated nodes can still split, at low connectivity and among obstacles. Eq. (10) is therefore an approximate design rule; the "
     "probability statement comes from the certificate of Section 4.6. "
     "With independent failures the surviving nodes are again uniformly distributed, so failures multiply {{a(x)}}, {{a(x, y)}} and "
     "{{b(x)}} by {{1 − f}} in every expression above, and in Eq. (9) the prefactor {{N}} becomes {{(1 − f)N}}. The expected k-covered fraction and the expected detection "
@@ -572,10 +587,12 @@ d.p("The triangular lattice, with neighbors {{√3r}} apart in rows {{1.5r}} apa
     "raster points they cover, and a node is deleted when each of its points is still covered by another remaining "
     "node. (v) Selection: the offset with the fewest remaining nodes is kept, the first one on ties. "
     "(vi) Verification: a raster cannot exclude small gaps between its points, so the selected layout is checked "
-    "without a raster. Following the perimeter criterion of Huang and Tseng [@huangtseng], the field is covered if "
+    "without a raster. Extending the perimeter criterion of Huang and Tseng [@huangtseng] to the field edges, and for "
+    "distinct node positions, the field is covered if "
     "every point of the four field edges lies in some disk and every point of each sensing circle inside the field "
     "lies in the disk of another node. Both conditions reduce to unions of intervals, which we evaluate in closed "
-    "form with a relative tolerance of 10⁻⁹ on {{r}}. If the test fails, steps (i)-(v) are repeated on a 0.5 m "
+    "form with a relative tolerance of 10⁻⁹ on {{r}}; this tolerance matters because the triangular lattice has zero "
+    "margin where three disks meet. If the test fails, steps (i)-(v) are repeated on a 0.5 m "
     "raster. Pruning removes border nodes only, but it could still disconnect the communication graph, so the "
     "graph of every pruned lattice is also checked at {{R_c = √3r}}.")
 d.p("For a planned drop, {{|g_j + e_j − x|^2/σ^2}} follows a non-central chi-square law with two degrees of freedom "
@@ -603,7 +620,7 @@ d.p("where {{B^{-1}(·; a, b)}} is the quantile function of the Beta({{a, b}}) d
     "{{α' = α/K}} = 0.005, so by the Bonferroni inequality the probability that the procedure returns a design with "
     "{{p(D) < 1 − δ}} is at most {{α}} = 0.05, whatever the order of the attempts: each attempt uses fresh drops, "
     "so given the design it tests, it accepts a design that falls short with probability at most {{α'}}. If no "
-    "attempt passes, the design is reported as not certified. Samples are never reused. The lattice search sample "
+    "attempt passes, the design is reported as not certified. No sample is used twice for the same design. The lattice search sample "
     "(500 drops), the simulated connectivity search of Section 4.7 (2,000 graphs per {{N}}) and the 300 to 1,000 "
     "validation drops of Sections 6.2 to 6.9 estimate how well a rule is calibrated; a share above 95% in those "
     "samples, or a Wilson interval that contains 95%, is not treated as evidence that a design meets "
@@ -615,7 +632,7 @@ d.table("Pseudocode of the design and certification procedures",
         [["Algorithm 1: random drop (design)"],
          ["Input {{L, r, R_c, C_t, δ, f}}\n1: {{N_cov}} ← doubling and bisection on Eq. (8)\n2: {{N_conn}} ← doubling and bisection on Eq. (9)\n3: return {{N_0}} = max({{N_cov}}, {{N_conn}}) and pass it to Algorithm 3"],
          ["Algorithm 2: planned drop (design)"],
-         ["Input {{L, r, σ, C_t}} (and {{δ}})\n1: {{κ}} ← 1\n2: build the triangular (or square) lattice for radius {{κr}}: offsets, candidates,\n    raster test, pruning, selection, exact coverage and connectivity checks\n3: mean design: if Eq. (18) ≥ {{C_t}} return lattice;\n    reliability design: if the Wilson lower bound of P({{C ≥ C_t}}) over 500\n    search drops ≥ {{1 − δ}} pass the lattice to Algorithm 3\n4: {{κ}} ← {{κ}} − 0.02 and go to 2"],
+         ["Input {{L, r, σ, C_t}} (and {{δ}})\n1: {{κ}} ← 1\n2: build the triangular (or square) lattice for radius {{κr}}: offsets, candidates,\n    raster test, pruning, selection (for {{κ}} = 1 also the exact coverage\n    and connectivity checks)\n3: mean design: if Eq. (18) ≥ {{C_t}} return lattice;\n    reliability design: if the Wilson lower bound of P({{C ≥ C_t}}) over 500\n    search drops ≥ {{1 − δ}} pass the lattice to Algorithm 3\n4: {{κ}} ← {{κ}} − 0.02 and go to 2"],
          ["Algorithm 3: certification"],
          ["Input design {{D_1}}, {{δ}}, {{α}} = 0.05, {{K}} = 10, {{n_c}} = 2,000\n1: for {{k}} = 1, ..., {{K}}: draw {{n_c}} new drops of {{D_k}}, count successes {{K_D}}\n2:    {{p_L}} ← Eq. (19) with {{α' = α/K}}\n3:    if {{p_L ≥ 1 − δ}} return {{D_k}} (certified)\n4:    next design: {{D_k}} with {{⌈0.02N_0⌉}} more nodes, or {{κ}} − 0.02\n5: return not certified"]],
         [4600], header_rows=0, align=["left"])
@@ -625,7 +642,7 @@ d.p("Practical sites contain buildings and other obstacles [@liuz, @ahmed]. Let 
     "fall uniformly over {{F_f}}, and let a node sense a point only when the segment between them crosses no "
     "obstacle. Eq. (3) then becomes")
 d.eq(r"a(\mathbf{x})=\frac{\left|\left\{\mathbf{y}\in F_{f}:\,\left|\mathbf{x}-\mathbf{y}\right|\leq r,\ \left[\mathbf{x},\mathbf{y}\right]\cap O=\emptyset\right\}\right|}{\left|F_{f}\right|}")
-d.p("and every integral over {{F}} in Eqs. (4), (5) and (9) runs over {{F_f}}. For the radio we use log-distance path loss "
+d.p("and every integral over {{F}} in Eqs. (4), (5) and (9) runs over {{F_f}}, with {{A}} replaced by {{|F_f|}}. For the radio we use log-distance path loss "
     "with exponent {{η}} and log-normal shadowing with standard deviation {{σ_s}} dB, independent across links "
     "[@rappaport, @bettstetterhartmann]. With {{R_c}} the median range and an extra loss {{L_o}} for a link that "
     "crosses an obstacle, two nodes at {{x}} and {{y}} are linked with probability")
@@ -695,19 +712,19 @@ d.table("Simulation settings",
          ["Stress", "100-400", "{{r}} = 20, 40 m, {{C_t}} up to 0.999, five field shapes, link correlation 0-0.45", "1,000 / 2,000"],
          ["Run time", "200, 500", "all steps and baselines, one core", "3 calls"]],
         [1230, 580, 2010, 780])
-d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G × G}} cell centers) and first seed of every "
+d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G × G}} cell centers) and seed base of every "
         "result. Each ID runs with run_experiments.py --exp ID and the settings in config/experiments.yaml; per-drop outcomes, layouts and all seeds are in "
         "results/raw, and all test families in results/statistical_tests.csv. Design, validation and certification "
-        "samples use separate seeds",
+        "samples of the same design use separate seeds",
         [["Result", "ID", "Raster or quadrature", "Seed base"],
          ["Fig. 2, Table 6", "E2", "200²; model 240², 400 nodes", "2,000"],
          ["Fig. 3", "E6a", "200²; {{M}} = 50-80, 200² cells", "6,000"],
          ["Fig. 4, Table 7", "E6b", "200² (300² at 400 m)", "6,100"],
          ["Table 8", "E17", "as E6b, E7b and E11", "50,000"],
-         ["Fig. 5, Section 6.4", "E7, S2", "200²", "7,000"],
+         ["Fig. 5, Section 6.4", "E7, S2", "200²", "7,000; 4,000"],
          ["Table 9", "E5, E25", "400², 1000², exact test", "none"],
          ["Section 6.5 (ILP)", "E13, E21", "10-20 m grids; 250², 1000²", "none"],
-         ["Fig. 6, Table 10", "E8, E16, E18", "250², 150², 200²", "8,000"],
+         ["Fig. 6, Table 10", "E8, E16, E18", "250², 150², 200²", "8,000; 30,000; 56,000"],
          ["Fig. 7, Table 11", "E10", "80², 250²", "10,000"],
          ["Table 12", "E24", "as E10 (same seeds)", "10,000"],
          ["Table 13", "E23", "as E10 and E6b", "68,000"],
@@ -715,14 +732,15 @@ d.table("Reproducibility map: experiment, raster or quadrature ({{G}}² = {{G ×
          ["Fig. 8", "E11", "200²; model 80², 200²", "11,000"],
          ["Fig. 9, Table 14, Section 6.10", "E19", "1 m cells; 200²", "58,000"],
          ["Table 15", "E12", "200²", "12,000"],
-         ["Section 6.11", "E15, E22", "200²", "15,000"],
-         ["Table 16", "E14, E20", "200²; 100²", "14,000"]],
+         ["Section 6.11", "E15, E22", "200²", "15,000; 66,000"],
+         ["Table 16", "E14, E20", "200²; 100²", "14,000; 64,000"]],
         [1450, 1000, 1400, 750])
 d.p("**Baselines.** We compared the proposed lattice with random placement, VFA [@zou], PSO [@kennedy], GWO "
     "[@mirjalili], a real-coded genetic algorithm (GA) [@holland, @eshelman], and three methods published after 2024: VASF-PSO "
     "[@haris], ICGWO [@shaikh] and DAR-SSA [@kheam]. "
     "The last three were re-implemented from their published descriptions; details that the papers leave open were "
-    "set to common default values (Table 5 and the code). All population methods used 30 agents and 300 iterations, "
+    "set to common default values (Table 5 and the code); for VASF-PSO, the speed of a particle in Eq. (9) of "
+    "[@haris] is its root-mean-square velocity component and {{v_max}} = {{L}}/5. All population methods used 30 agents and 300 iterations, "
     "that is, 9,030 fitness evaluations on the same 80 × 80 fitness raster with the same field-boundary clipping, and "
     "returned the best layout found; GWO and ICGWO keep the three best solutions as leaders [@mirjalili]. No method "
     "was tuned to this problem: each used its published or default parameters and the same 30 seeds per node count. "
@@ -740,7 +758,7 @@ d.table("Baseline settings (equal budget of 9,030 evaluations)",
          ["GA [@holland]", "Binary tournament, BLX-0.5 crossover [@eshelman] ({{p_c}} = 0.9), Gaussian mutation ({{p_m}} = 1/2{{N}}, 0.05{{L}}), 2 elites"],
          ["GWO [@mirjalili]", "{{a}}: 2 → 0 linearly"],
          ["ICGWO [@shaikh]", "Logistic-map start, {{a}}: 2 → 0 quadratically"],
-         ["VASF-PSO [@haris]", "Hammersley start, {{w}}: 0.9 → 0.4, {{c_1}}: 2.5 → 0.5, {{c_2}}: 0.5 → 2.5, step scaled by distance to best"],
+         ["VASF-PSO [@haris]", "Hammersley start, per-particle {{w = 0.2 + 0.7(1 − |v|/v_max)}}, {{c_1}}: 2.5 → 0.5, {{c_2}}: 0.5 → 2.5"],
          ["DAR-SSA [@kheam]", "Producers 80% → 20%, ST = 0.8, SD = 0.2, soft-core repulsion, {{ρ = √3r/2}}"],
          ["VFA [@zou]", "Repulsion below {{√3r}}, weak attraction up to {{1.5√3r}}, 400 iterations"]],
         [1350, 3250])
@@ -809,6 +827,9 @@ _env_rows = {k[1]: q for k, q in e17_final.items() if k[0] == "environment"}
 _extra_cov = [int(q["N_certified"]) - int(q["N_rule"]) for q in _cov_cert]
 _two_steps = sum(1 for q in _cov_cert if 2 <= int(q["attempt"]) <= 3)
 _pl_min = min(_e17_cert, key=lambda q: float(q["lower_bound"]))
+_sel46 = next((q for q in beta_rows if q["L"] == 200 and q["r"] == 25 and q["target"] == 0.8
+               and any(int(c["N_certified"]) == int(q["N"]) and int(c["attempt"]) == 1 for c in _cov_cert
+                       if c["L"] == 200 and c["r"] == 25 and c["target"] == 0.8)), None)
 _pl_max = max(_e17_cert, key=lambda q: float(q["lower_bound"]))
 d.h2("6.3 Certification of the random-drop designs")
 d.p(f"Table 8 lists the node counts after Algorithm 3, with {CP_N:,} new drops per attempt. Of the sixteen coverage "
@@ -826,7 +847,11 @@ d.p(f"Table 8 lists the node counts after Algorithm 3, with {CP_N:,} new drops p
        f" The one-sided lower bounds {{{{p_L}}}} of the {len(_e17_cert)} certified designs lie between "
        f"{pct(min(float(q['lower_bound']) for q in _e17_cert), 1)} ({int(_pl_min['N_certified'])} nodes; {{{{L}}}} = {int(_pl_min['L'])} m, {{{{r}}}} = {int(_pl_min['r'])} m, "
        f"{{{{C_t}}}} = {_pl_min['target']:g}) and {pct(max(float(q['lower_bound']) for q in _e17_cert), 1)} ({int(_pl_max['N_certified'])} nodes; {{{{L}}}} = {int(_pl_max['L'])} m, "
-       f"{{{{C_t}}}} = {_pl_max['target']:g}); the bound of every attempt is listed in results/E17_certification.csv." if not _failed else
+       f"{{{{C_t}}}} = {_pl_max['target']:g}); the bound of every attempt is listed in results/E17_certification.csv."
+       " A design that passes at the first attempt shows, by selection, a share above its true value, and the "
+       "300-drop shares of Table 7 are independent estimates that are not pooled with the certificate"
+       + (f" (for {{{{L}}}} = 200 m, {{{{r}}}} = 25 m, {{{{C_t}}}} = 0.8 the certified {int(_sel46['N'])} nodes met "
+          f"the target in {pct(_sel46['p_meet'], 1)} of 300 drops)." if _sel46 else ".") if not _failed else
        f"{len(_failed)} design{'s' if len(_failed) > 1 else ''} could not be certified within ten attempts and "
        f"{'are' if len(_failed) > 1 else 'is'} reported as such."))
 _cell = lambda q: (f"{int(q['N_rule'])}→{int(q['N_certified'])}" if q["N_certified"] != "" else f"{int(q['N_rule'])}→n.c.")
@@ -889,8 +914,8 @@ d.p(f"For {{{{L}}}} = 500 m and {{{{r}}}} = 62.5 m the diameter-spaced grid leav
     + "; the triangular lattice needs "
     f"{int(g625['triangular_nodes'])} instead of {int(g625['square_nodes'])} nodes in the example case and "
     f"{pct(tri_saving_min, 0)} to {pct(tri_saving, 0)} fewer nodes over the seven radii. "
-    + (f"After pruning, every triangular lattice was connected at {{{{R_c = √3r}}}}: pruning removes only border "
-       f"nodes, and every remaining node kept at least {_tri_deg} lattice neighbors at distance {{{{√3r}}}}. "
+    + (f"After pruning, the communication graph of every triangular lattice was checked by graph search at "
+       f"{{{{R_c = √3r}}}} and found connected; pruning removes only border nodes. "
        if _lat_conn else "")
     + "The largest nearest-neighbor distance equals {{√3r}}, so the connectivity margin is zero, as is the coverage "
     "margin at the points where three disks meet.")
@@ -1041,7 +1066,8 @@ _any_full = sum(int(q["full_cover_runs"]) for q in e24)
 _sens_tests = {t["comparison"]: t for t in tests if t["family"].startswith("N.")}
 _sens_sig = [c for c, t in _sens_tests.items() if t["p_holm"] < 0.05]
 d.p(f"Table 12 repeats the three recent methods at 33 nodes with {len(e24)} other settings on {len(_sens_seeds)} of "
-    "the seeds of Table 11. The settings change the search factor floor of VASF-PSO, the decay of the control "
+    "the seeds of Table 11. The settings change the search factor of VASF-PSO (including the linear rule of version "
+    "1.2.0 of our code), the decay of the control "
     "parameter of ICGWO, the safety threshold and repulsion step of DAR-SSA, the split of the budget between "
     "population and iterations, and the budget itself. "
     + ("No variant reached full coverage in any run. " if _any_full == 0 else
@@ -1053,7 +1079,8 @@ d.p(f"Table 12 repeats the three recent methods at 33 nodes with {len(e24)} othe
     + (f"After Holm correction {len(_sens_sig)} of the {len(_sens_tests)} paired Wilcoxon comparisons with the "
        "default setting were significant. " if _sens_tests else "")
     + "The ranking of Table 11 at 33 nodes, with the lattice ahead, did not change.")
-_short = {"search factor floor 0.1": "search floor 0.1", "search factor floor 0.4": "search floor 0.4",
+_short = {"v1.2.0 rule (linear w 0.9 to 0.4 and distance step factor)": "{{w}} linear (v1.2.0)",
+          "search factor range 0.4 to 0.9": "{{w}} in [0.4, 0.9]",
           "60 particles x 150 iterations": "60 × 150", "double budget (30 x 600)": "30 × 600",
           "linear decay of a": "{{a}} linear", "cubic decay of a": "{{a}} cubic", "ST = 0.9": "ST = 0.9",
           "repulsion step 0.3r": "step 0.3{{r}}", "60 sparrows x 150 iterations": "60 × 150"}
@@ -1130,7 +1157,7 @@ for q in e23:
                "One fitness evaluation, 80²" if q["task"].startswith("one fitness") else "Connectivity check")
         _rows_rt.append([lab, _ts(q['median_s']), f"{q['peak_traced_MiB']:.1f}"])
 d.table(f"Run time and peak memory on one core ({e23hw['cpu'].split(' @')[0]}, Python {e23hw['python']}, "
-        f"NumPy {e23hw['numpy']}; median of 3 calls, 500 m field, {{{{r}}}} = 62.5 m, rules in the 200 m field)",
+        f"NumPy {e23hw['numpy']}; median of 3 calls, one call for certification and the error-tolerant search, 500 m field, {{{{r}}}} = 62.5 m, rules in the 200 m field)",
         _rows_rt, [2600, 1000, 1000])
 
 # ---- 6.8 extensions
@@ -1248,13 +1275,13 @@ _cs = sorted(e19s_final.values(), key=lambda q: q["rho"])
 
 def _corr_need(q):
     if q["N_certified"] != "":
-        return f"{int(q['N_certified'])} nodes ({pct(int(q['N_certified']) / int(q['N_rule']) - 1, 0)} more than the rule)"
+        return f"was certified at {int(q['N_certified'])} nodes ({pct(int(q['N_certified']) / int(q['N_rule']) - 1, 0)} more than the rule)"
     if q["N_design"] == "":
         n_max = max(n for n, _ in eval(q["design_path"]))
-        return f"more than {n_max} nodes, since no count up to {n_max} reached the design share"
-    return f"more than {int(q['N'])} nodes (the design of {int(q['N_design'])} nodes was not certified)"
-d.p("Shadowing on links that share a node is correlated in measurements, with correlation coefficients of up to "
-    "about 0.33 [@agrawal]. We repeated the open-field joint design with 8 dB shadowing after splitting the shadowing "
+        return f"needed more than {n_max} nodes, since no count up to {n_max} reached the design share"
+    return f"needed more than {int(q['N'])} nodes (the design of {int(q['N_design'])} nodes was not certified)"
+d.p("Link shadowing is correlated in measurements, with correlation coefficients of up to about 0.33 between "
+    "link pairs [@agrawal]. We repeated the open-field joint design with 8 dB shadowing after splitting the shadowing "
     "of each link into a part shared by its two end nodes and an independent part, so that two links with a common "
     "node have correlation " + ", ".join(f"{q['link_correlation']:g}" for q in _cs[:-1]) + f" or {_cs[-1]['link_correlation']:g}"
     + f". At the {int(_cs[0]['N_rule'])} nodes of the independent rule, both targets held in "
@@ -1263,7 +1290,7 @@ d.p("Shadowing on links that share a node is correlated in measurements, with co
     + " and ".join(f"{pct(q['rule_p_conn'], 1)}" for q in _cs[1:])
     + ": a node whose links all suffer from poor shadowing becomes isolated. We then sized the network on a separate "
     "design sample (1,000 drops per step, the node count raised in steps of 5% of the rule value until 96.5% of the "
-    "drops met both targets) and certified the result: " + "; ".join(f"the case with correlation {q['link_correlation']:g} needed {_corr_need(q)}"
+    "drops met both targets) and certified the result: " + "; ".join(f"the case with correlation {q['link_correlation']:g} {_corr_need(q)}"
                                    for q in _cs[1:])
     + ". The isolated-node rule therefore holds for independent shadowing only; when link shadowing is correlated, "
     "the connectivity term has to be sized by simulation with the correlation included. Taken together, Sections "
@@ -1330,9 +1357,11 @@ d.p(f"Table 16 applies the schedule of Section 4.8 to the joint design of Sectio
     f"the share of deployments whose own success rate was below 95% was "
     + ", ".join(pct(q["share_below"], 1) for q in _sched)
     + "; for " + ", ".join(pct(q["share_certainly_below"], 1) for q in _sched)
-    + " of them the one-sided 95% upper bound of that rate was below 95% as well. The schedule thus meets its "
-    "target on average over deployments, not for every deployment; a planner who needs the per-deployment statement "
-    "must add nodes or wake more of them. With 0.5 J "
+    + " of them the one-sided 95% upper bound of that rate was below 95% as well. The average success rate over "
+    f"deployments stays close to the target ({pct(min(q['ensemble'] for q in _sched), 1)} to "
+    f"{pct(max(q['ensemble'] for q in _sched), 1)}), but the schedule is not certified, and "
+    f"{pct(min(q['share_below'] for q in _sched), 0)} to {pct(max(q['share_below'] for q in _sched), 0)} of the "
+    "deployments fall below 95%; a planner who needs the per-deployment statement must add nodes or wake more of them. With 0.5 J "
     "per node, 2,000-bit packets, {{E_elec}} = 50 nJ/bit and {{ε_amp}} = 100 pJ/bit/m², the first-order radio "
     f"model allows {round(e14[0]['rounds_always_on'])} rounds of communication energy for the always-on network and "
     f"{round(e14[3]['rounds']):,} at three times the node count, a factor of {e14[3]['lifetime_gain']:.2f}; these are "
@@ -1370,38 +1399,39 @@ d.p("**External validity.** All results come from geometric and link-level simul
 # ============================================================================= 8. Conclusion
 d.h1("8. Conclusion")
 d.p("Sizing a random drop for the expected coverage misses the target about half of the time. An edge-aware "
-    "variance for a fixed node count and a Beta approximation turn the target into a design rule that met a 95% "
-    f"requirement in {pct(beta_lo, 0)} to {pct(beta_hi, 0)} of drops over sixteen settings, at {pct(extra_lo, 0)} to "
+    "variance for a fixed node count and a Beta approximation turn the target into a design rule under which "
+    f"{pct(beta_lo, 1)} to {pct(beta_hi, 1)} of drops met the target against a required 95% over sixteen settings, at {pct(extra_lo, 0)} to "
     f"{pct(extra_hi, 0)} more nodes than the mean rule. Because the rule is an approximation, the main designs are "
     "certified on independent drops with a one-sided Clopper-Pearson bound and a Bonferroni correction over the "
     f"attempts, which added {pct(min(_cov_extra), 0)} to {pct(max(_cov_extra), 1)} more nodes to the coverage designs "
-    "and gives each a known error probability. The same expressions extend to connectivity, failures, "
+    "and bounds the error probability of each design by 0.05 under the model. The same expressions extend to connectivity, failures, "
     "k-coverage, probabilistic sensing, obstacles, shadowing and heterogeneous radii; among buildings, and when link "
     "shadowing is correlated, connectivity must be sized by simulation. "
     f"At a drop error of 0.3{{{{r}}}} a certified triangular lattice needed {_lat03_nodes} nodes where a "
     f"certified random drop needed {_rc_n}; at errors comparable to the radius the advantage of planning vanishes. "
-    "With the node count set by these rules, the lattice reached full coverage without fitness evaluations and was "
-    "not beaten by any tested setting of eight baselines at that count. "
+    "With the node count set by these rules and exact placement, the lattice reached full coverage without fitness "
+    "evaluations and was not beaten by any tested setting of eight baselines at that count. "
     + (f"The stress study found the rule calibrated within sampling error in {len(_calib_ok)} of 14 settings, "
        "including small networks, very high targets and elongated and irregular fields, but optimistic for "
        + "; ".join(_lab(c) for c in _stress_rej_lo) + ", where certification is indispensable. " if _stress_rej_lo else
        f"The stress study, with small networks, very high targets and elongated and irregular fields, found no "
        f"significant miscalibration in {len(_calib_ok)} of 14 settings, and certification added at most "
        f"{pct(max(_stress_extra), 0)} more nodes there. ")
-    + "A randomized sleep schedule meets its target on average over deployments but "
-    "not in every deployment. Future work will add terrain, validate the rules in a packet-level simulator, and test "
+    + "A randomized sleep schedule stays close to its target on average over deployments, but "
+    f"{pct(min(q['share_below'] for q in _sched), 0)} to {pct(max(q['share_below'] for q in _sched), 0)} of "
+    "individual deployments fall below it. Future work will add terrain, validate the rules in a packet-level simulator, and test "
     "them in a field deployment.")
 
 d.h1("Code availability")
 d.p(f"The implementation code is publicly available at: {GITHUB}. It includes all parameters, seeds, per-drop "
     "outcomes, layouts, statistical scripts and unit tests, and one script that reproduces every table and figure; "
-    "Table 4 maps each result to its experiment. The version used in this article (v1.3.0) is archived at Zenodo, "
+    f"Table 4 maps each result to its experiment. The version used in this article (v{ARGS.code_version}) is archived at Zenodo, "
     f"DOI: {ZENODO_DOI}.")
 d.h1("Funding")
 d.p("This research received no external funding.")
-d.h1("Conflicts of interest")
+d.h1("Conflicts of Interest")
 d.p("The authors declare no conflict of interest.")
-d.h1("Author contributions")
+d.h1("Author Contributions")
 d.p(f"Conceptualization, {AUTHORS[0]} and {AUTHORS[1]}; methodology, {AUTHORS[0]}; software, {AUTHORS[0]}; "
     f"validation, {AUTHORS[0]} and {AUTHORS[1]}; formal analysis, {AUTHORS[0]}; investigation, {AUTHORS[0]}; "
     f"data curation, {AUTHORS[0]}; writing—original draft preparation, {AUTHORS[0]}; writing—review and editing, "

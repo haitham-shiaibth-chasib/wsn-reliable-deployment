@@ -180,8 +180,9 @@ E10_baselines:
     PSO: {w: 0.729, c1: 1.49445, c2: 1.49445}
     GWO: {a_schedule: "linear 2 -> 0", leaders: "elitist (best three found so far, Mirjalili et al. 2014)"}
     ICGWO: {initialisation: "logistic map, mu = 4", a_schedule: "2 (1 - (t/T)^2)", leaders: "elitist"}
-    VASF-PSO: {initialisation: "Hammersley with random shift", w: [0.9, 0.4], c1: [2.5, 0.5], c2: [0.5, 2.5],
-               search_factor_floor: 0.2}
+    VASF-PSO: {initialisation: "Hammersley with random shift", c1: [2.5, 0.5], c2: [0.5, 2.5],
+               search_factor: "Eq. (9) of Haris and Nam (2025): w_i = 0.2 + 0.7 (1 - |V_i| / V_max) per particle",
+               params: {inertia: velocity, w_start: 0.9, w_end: 0.2}}   # v1.3.1; v1.2.0 used linear w 0.9 -> 0.4 (E24 variant)
     DAR-SSA: {producer_share: [0.8, 0.2], ST: 0.8, SD: 0.2, repulsion_length_factor: 0.8660254037844386,
               repulsion_step_factor: 0.15, returned_layout: "best found during the run (archive); search dynamics unchanged"}
     GA: {selection: "binary tournament", crossover: "BLX-alpha, alpha = 0.5, pc = 0.9", mutation: "Gaussian, pm = 1/dim, sigma = 0.05 L", elitism: 2,
@@ -284,9 +285,9 @@ E24_baseline_sensitivity:
   nodes: [33]
   seeds: 10                    # the first 10 E10 seeds: seed_base + 37 N + k, k = 0..9
   variants:
-    VASF-PSO:
-      "search factor floor 0.1": {sf_floor: 0.1}
-      "search factor floor 0.4": {sf_floor: 0.4}
+    VASF-PSO:                  # the E10 setting (Eq. 9 of the published method) plus the change below
+      "v1.2.0 rule (linear w 0.9 to 0.4 and distance step factor)": {inertia: linear, w_start: 0.9, w_end: 0.4}
+      "search factor range 0.4 to 0.9": {w_end: 0.4}
       "60 particles x 150 iterations": {particles: 60, iters: 150}
       "double budget (30 x 600)": {particles: 30, iters: 600}
     ICGWO:

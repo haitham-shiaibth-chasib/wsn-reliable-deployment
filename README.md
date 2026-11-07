@@ -153,6 +153,20 @@ may differ in details from the original authors' code. GWO and ICGWO keep the be
 so far as leaders (elitist, as in the reference GWO), and DAR-SSA keeps an archive of the best layout found,
 so every optimiser returns the best layout found during its run.
 
+## Changes in version 1.3.1
+
+* VASF-PSO now follows Eq. (9) of the published method (Haris Muhammad and Nam, 2025): each particle's search
+  factor is w_i = 0.2 + 0.7 (1 - |V_i| / V_max), with |V_i| the root-mean-square velocity component and
+  V_max = L/5 (`placement.vasf_pso(..., inertia="velocity")`). Version 1.3.0 used a linear inertia weight
+  (0.9 to 0.4) with a distance-based step factor; that rule is still the function default, so v1.3.0 results
+  are reproduced bit for bit, and it appears as a variant in E24. The VASF-PSO rows of E10 and E24 were re-run
+  with `E10_METHODS=VASF-PSO` and `E24_METHODS=VASF-PSO`; all other rows are unchanged.
+* `run_experiments.py`: `E10_METHODS` re-runs part of the E10 methods and keeps the other rows.
+* Framework figure redrawn (arrows no longer cross box text; connectivity rule written as the isolated-node
+  approximation of Eq. 9).
+* Manuscript build: references on random-set moments and grid deployment under placement error, wording of the
+  certificate, half-up rounding of percentages.
+
 ## Changes in version 1.3.0 (revision after review)
 
 * Certification layer (`wsndeploy/certify.py`): one-sided Clopper-Pearson lower bound on fresh drops, at most
@@ -196,7 +210,7 @@ so every optimiser returns the best layout found during its run.
 
 ## License and citation
 
-The version used in the revised article (v1.3.0) is archived at Zenodo as its own version; the concept DOI
+The version used in the revised article (v1.3.1) is archived at Zenodo as its own version; the concept DOI
 https://doi.org/10.5281/zenodo.23717648 always resolves to the latest version. The submitted version (v1.2.0)
 is https://doi.org/10.5281/zenodo.23717649.
 

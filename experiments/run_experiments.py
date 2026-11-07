@@ -432,6 +432,7 @@ def _e10_job(args):
               "DAR-SSA": placement.dar_ssa, "GA": placement.ga}[name]
         kw = {"wolves": b["population"]} if name in ("GWO", "ICGWO") else \
              {"particles": b["population"]} if name == "VASF-PSO" else {"pop": b["population"]}
+        kw.update(cfg["methods"].get(name, {}).get("params", {}))
         s, evals = fn(L, r, n, rng, iters=b["iterations"], res=b["fitness_raster"], **kw)
     else:
         s = placement.lattice_for_n(L, r, n, sim.raster(L, cfg["lattice_design_raster"]))
@@ -444,14 +445,17 @@ def run_E10(workers=1):
     L, r = c["field"], c["sensing_radius"]
     methods = [m for m in c["methods"] if m != "Proposed lattice"]
     seeds = max(2, c["seeds_per_method"] // 5) if QUICK else c["seeds_per_method"]
+    only = [m for m in os.environ.get("E10_METHODS", "").split(",") if m]   # re-run part of the methods only
     jobs = []
     for n in c["nodes"]:
         for m in methods:
             for k in range(seeds):
                 seed = c["seed_base"] + 37 * n + k
                 SEEDS.append(dict(experiment="E10", seed=seed, method=m, N=n, k=k))
-                jobs.append((m, L, r, n, seed, c))
-        jobs.append(("Proposed lattice", L, r, n, 0, c))
+                if not only or m in only:
+                    jobs.append((m, L, r, n, seed, c))
+        if not only or "Proposed lattice" in only:
+            jobs.append(("Proposed lattice", L, r, n, 0, c))
     if workers <= 1:                     # no process pool (also works where named pipes are restricted)
         out = [_e10_job(j) for j in jobs]
     else:
@@ -467,6 +471,14 @@ def run_E10(workers=1):
                         connected_rc_sqrt3r=bool(sim.connectivity(s, c["connectivity_range_factor"] * r + 1e-6)[0]),
                         coverage_sigma_0p2r=float(noisy.mean()), seconds=dt, fitness_evals=evals, nodes_used=len(s)))
         write_layout(f"E10_{name.replace(' ', '_')}_N{n}_seed{seed}.csv", s)
+    path = os.path.join(RAW, "E10_runs.csv")
+    if only and os.path.exists(path):                  # keep the rows of the methods not run now
+        with open(path) as f:
+            old = [{k: (v if k == "method" else (v == "True") if k == "connected_rc_sqrt3r"
+                    else int(float(v)) if k in ("N", "seed", "fitness_evals", "nodes_used") else float(v))
+                    for k, v in q.items()} for q in csv.DictReader(f)]
+        new = {(q["method"], int(q["N"]), int(q["seed"])): q for q in raw}
+        raw = [new.pop((q["method"], int(q["N"]), int(q["seed"])), q) for q in old] + list(new.values())
     write("E10_runs.csv", raw, RAW)
     summarize_E10(raw)
 
@@ -522,7 +534,9 @@ def run_E24(workers=1):
                     seed = e10["seed_base"] + 37 * n + k          # the same seeds as E10 (paired)
                     SEEDS.append(dict(experiment="E24", seed=seed, method=name, variant=variant, N=n, k=k))
                     if not only or name in only:
-                        jobs.append((name, variant, dict(kw), L, r, n, seed, res))
+                        base = dict(e10["methods"].get(name, {}).get("params", {}))   # the E10 setting
+                        base.update(kw)
+                        jobs.append((name, variant, base, L, r, n, seed, res))
     if workers <= 1:
         out = [_e24_job(j) for j in jobs]
     else:
